@@ -25,9 +25,9 @@ public class Cars {
 	                                      /* PUBLIC ATTRIBUTE */
 	
 	                                        /* CONSTRUCTORS */
-	Cars(){}
+	public Cars(){}
 	
-	Cars(Long id, String registration_plate, String name, Boolean isDeleted){
+	public Cars(Long id, String registration_plate, String name, Boolean isDeleted){
 		this.id = id;
 		this.registration_plate= registration_plate;
 		this.name = name;

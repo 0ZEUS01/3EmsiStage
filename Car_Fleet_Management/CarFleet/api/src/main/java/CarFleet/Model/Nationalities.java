@@ -24,10 +24,11 @@ public class Nationalities {
 	
 	Nationalities(){}
 	
-	Nationalities(Long id, String nationality){
+	public Nationalities(Long id, String nationality){
 		this.id = id;
 		this.nationality = nationality; 
 	}
+	
 	
 	                                          /* GETTERS */
 	public Long getId() {

@@ -47,12 +47,13 @@ public class Users {
                                              /* CONSTRUCTORS */
 	Users(){}
 	
-	Users(Long id, String fname, String lname, LocalDate birthdate, String username, String password, Nationalities nationality, Boolean isDeleted){
+	public Users(Long id, String fname, String lname, LocalDate birthdate, String username, String email, String password, Nationalities nationality, Boolean isDeleted){
 		this.id = id;
 		this.fname = fname;
 		this.lname = lname;
 		this.birthdate = birthdate;
 		this.username = username;
+		this.email = email;
 		this.password = password;
 		this.nationality = nationality;
 		this.isDeleted = isDeleted;
@@ -87,8 +88,8 @@ public class Users {
 		return password; // WE NEED TO HIDE THE PASSWORD SHOULD NOT BE DISPLAYED !!!
 	}
 	
-	public String getNationality() {
-		return nationality.getNationality();
+	public Nationalities getNationality() {
+		return nationality;
 	}
 	
 	public Boolean getIsDeleted() {
