@@ -13,6 +13,8 @@ public class CarFleetController {
 	@Autowired
     private CarFleetService carFleetService;
 
+	                                     /* USER ENDPOINTS */
+	
     // Endpoint to get all users
     @GetMapping("/users")
     public List<Users> getAllUsers() throws SQLException {
@@ -43,36 +45,40 @@ public class CarFleetController {
         carFleetService.deleteUser(id);
     }
 
+                                         /* CAR ENDPOINTS */
+    
     // Endpoint to get all cars
     @GetMapping("/cars")
-    public List<Cars> getAllCars() {
+    public List<Cars> getAllCars() throws SQLException {
         return carFleetService.getAllCars();
     }
 
     // Endpoint to get a specific car by ID
     @GetMapping("/cars/{id}")
-    public Cars getCarById(@PathVariable Long id) {
+    public Cars getCarById(@PathVariable Long id) throws SQLException {
         return carFleetService.getCarById(id);
     }
 
     // Endpoint to create a new car
     @PostMapping("/cars")
-    public Cars createCar(@RequestBody Cars car) {
+    public Cars createCar(@RequestBody Cars car) throws SQLException {
         return carFleetService.createCar(car);
     }
 
     // Endpoint to update an existing car
     @PutMapping("/cars/{id}")
-    public Cars updateCar(@PathVariable Long id, @RequestBody Cars updatedCar) {
+    public Cars updateCar(@PathVariable Long id, @RequestBody Cars updatedCar) throws SQLException {
         return carFleetService.updateCar(id, updatedCar);
     }
 
     // Endpoint to delete a car
     @DeleteMapping("/cars/{id}")
-    public void deleteCar(@PathVariable Long id) {
+    public void deleteCar(@PathVariable Long id) throws SQLException {
         carFleetService.deleteCar(id);
     }
 
+                                        /* LOCATION ENDPOINTS */
+    
     // Endpoint to get all locations
     @GetMapping("/locations")
     public List<Locations> getAllLocations() {
