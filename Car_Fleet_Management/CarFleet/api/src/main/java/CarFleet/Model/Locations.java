@@ -40,9 +40,9 @@ public class Locations {
 	                                     /* PUBLIC ATTRIBUTE */
 	
 	                                       /* CONSTRUCTORS */
-	Locations(){}
+	public Locations(){}
 	
-	Locations(Long id, BigDecimal latitude, BigDecimal longitude, LocalDate date, LocalTime time, Cars car){
+	public Locations(Long id, BigDecimal latitude, BigDecimal longitude, LocalDate date, LocalTime time, Cars car){
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -72,9 +72,9 @@ public class Locations {
 		return time;
 	}
 	
-	public String getCar() {
-		return car.getRegistrationPlate();
-	}
+	public Cars getCar() {
+        return car;
+    }
 	
 	                                          /* SETTERS */
 	

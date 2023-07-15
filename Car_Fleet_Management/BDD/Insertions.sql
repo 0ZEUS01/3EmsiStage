@@ -247,4 +247,5 @@ VALUES
 ('Zimbabwean');
 GO
 
-select * from users
+select * from cars
+

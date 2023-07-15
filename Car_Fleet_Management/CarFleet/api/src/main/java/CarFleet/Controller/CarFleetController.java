@@ -81,31 +81,31 @@ public class CarFleetController {
     
     // Endpoint to get all locations
     @GetMapping("/locations")
-    public List<Locations> getAllLocations() {
+    public List<Locations> getAllLocations() throws SQLException{
         return carFleetService.getAllLocations();
     }
 
     // Endpoint to get a specific location by ID
-    @GetMapping("/locations/{id}")
-    public Locations getLocationById(@PathVariable Long id) {
-        return carFleetService.getLocationById(id);
+    @GetMapping("/locations/{plate}")
+    public Locations getLocationById(@PathVariable String plate) throws SQLException{
+        return carFleetService.getLocationByRegistrationPlate(plate);
     }
 
     // Endpoint to create a new location
     @PostMapping("/locations")
-    public Locations createLocation(@RequestBody Locations location) {
+    public Locations createLocation(@RequestBody Locations location) throws SQLException{
         return carFleetService.createLocation(location);
     }
 
     // Endpoint to update an existing location
-    @PutMapping("/locations/{id}")
-    public Locations updateLocation(@PathVariable Long id, @RequestBody Locations updatedLocation) {
-        return carFleetService.updateLocation(id, updatedLocation);
+    @PutMapping("/locations/{plate}")
+    public Locations updateLocation(@PathVariable String plate, @RequestBody Locations updatedLocation) throws SQLException{
+        return carFleetService.updateLocation(plate, updatedLocation);
     }
 
     // Endpoint to delete a location
-    @DeleteMapping("/locations/{id}")
-    public void deleteLocation(@PathVariable Long id) {
-        carFleetService.deleteLocation(id);
+    @DeleteMapping("/locations/{plate}")
+    public void deleteLocation(@PathVariable String plate) throws SQLException{
+        carFleetService.deleteLocation(plate);
     }
 }
