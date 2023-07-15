@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import CarFleet.Model.*;
 import CarFleet.Service.CarFleetService;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -14,31 +15,31 @@ public class CarFleetController {
 
     // Endpoint to get all users
     @GetMapping("/users")
-    public List<Users> getAllUsers() {
+    public List<Users> getAllUsers() throws SQLException {
         return carFleetService.getAllUsers();
     }
 
     // Endpoint to get a specific user by ID
     @GetMapping("/users/{id}")
-    public Users getUserById(@PathVariable Long id) {
+    public Users getUserById(@PathVariable Long id) throws SQLException {
         return carFleetService.getUserById(id);
     }
 
     // Endpoint to create a new user
     @PostMapping("/users")
-    public Users createUser(@RequestBody Users user) {
+    public Users createUser(@RequestBody Users user) throws SQLException {
         return carFleetService.createUser(user);
     }
 
     // Endpoint to update an existing user
     @PutMapping("/users/{id}")
-    public Users updateUser(@PathVariable Long id, @RequestBody Users updatedUser) {
+    public Users updateUser(@PathVariable Long id, @RequestBody Users updatedUser) throws SQLException {
         return carFleetService.updateUser(id, updatedUser);
     }
 
     // Endpoint to delete a user
     @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable Long id) throws SQLException {
         carFleetService.deleteUser(id);
     }
 
