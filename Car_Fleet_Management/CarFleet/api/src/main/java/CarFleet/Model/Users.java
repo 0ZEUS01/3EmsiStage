@@ -45,7 +45,7 @@ public class Users {
 	                                       /* PUBLIC ATTRIBUTE */
 	
                                              /* CONSTRUCTORS */
-	Users(){}
+	public Users(){}
 	
 	public Users(Long id, String fname, String lname, LocalDate birthdate, String username, String email, String password, Nationalities nationality, Boolean isDeleted){
 		this.id = id;
