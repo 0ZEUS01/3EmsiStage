@@ -22,7 +22,7 @@ public class Nationalities {
 	
 	                                        /* CONSTRUCTORS */
 	
-	Nationalities(){}
+	public Nationalities(){}
 	
 	public Nationalities(Long id, String nationality){
 		this.id = id;
