@@ -1,13 +1,9 @@
 package CarFleet.Service;
 
-import org.hibernate.annotations.Nationalized;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties.Cache.Connection;
 import org.springframework.stereotype.Service;
 import org.springframework.util.NumberUtils;
-
 import CarFleet.Model.*;
 
-import java.beans.Statement;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,8 +23,42 @@ public class CarFleetService {
 	public CarFleetService() {
         connectDB = new ConnectDB();
     }
-
+    
 	                                      /* USERS SERVICES */
+	
+	public Users loginUser(String username_email, String password) throws SQLException{
+		Users user = null;
+		
+        connectDB.connect(); // Establish the database connection
+
+        java.sql.Connection connection = connectDB.getConnection();
+        String sql = "SELECT U.id_user, U.fname_user, U.lname_user, U.birthdate_user, U.username_user, U.email_user, U.password_user, U.nationality_user, N.nationality, U.isDeleted FROM Users U JOIN nationalities N ON U.nationality_user = N.id_nationality WHERE (U.username_user = ? OR U.email_user = ?) AND isDeleted = 0";
+        try (PreparedStatement statement = ((java.sql.Connection) connection).prepareStatement(sql)) {
+            statement.setString(1, username_email);
+            statement.setString(2, password);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Long userId = resultSet.getLong("id_user");
+                String fname = resultSet.getString("fname_user");
+                String lname = resultSet.getString("lname_user");
+                LocalDate birthdate = resultSet.getDate("birthdate_user").toLocalDate();
+                String username = resultSet.getString("username_user");
+                String email = resultSet.getString("email_user");
+                String password_user_db = resultSet.getString("password_user");
+                Nationalities nationality = new Nationalities(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
+                Boolean isDeleted = resultSet.getBoolean("isDeleted");
+                
+                Encrypt encryptor = new Encrypt();
+
+                if(encryptor.matches(password, password_user_db)) {
+                	user = new Users(userId, fname, lname, birthdate, username, email, password, nationality, isDeleted);
+                }
+            }
+        } catch (SQLException e) {
+            // Handle the exception appropriately
+        }
+        return user;
+	}
 	
     public List<Users> getAllUsers() throws SQLException {
         List<Users> users = new ArrayList<>();
@@ -103,10 +133,16 @@ public class CarFleetService {
             statement.setDate(3, java.sql.Date.valueOf(user.getBirthdate()));
             statement.setString(4, user.getUsername());
             statement.setString(5, user.getEmail());
-            statement.setString(6, user.getPassword());
+            
+            Encrypt encryptor = new Encrypt();
+            String encryptedPassword = encryptor.encryptPassword(user.getPassword());
+            statement.setString(6, encryptedPassword);
+            
+            
             statement.setLong(7, user.getNationality().getId());
             statement.setBoolean(8, user.getIsDeleted());
-
+            
+            System.out.println(user);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 1) {
                 // User was successfully created in the database
@@ -144,7 +180,11 @@ public class CarFleetService {
                 statement.setDate(3, java.sql.Date.valueOf(existingUser.getBirthdate()));
                 statement.setString(4, existingUser.getUsername());
                 statement.setString(5, existingUser.getEmail());
-                statement.setString(6, existingUser.getPassword());
+                
+                Encrypt encryptor = new Encrypt();
+                String encryptedPassword = encryptor.encryptPassword(existingUser.getPassword());
+                statement.setString(6, encryptedPassword);
+                
                 statement.setLong(7, existingUser.getNationality().getId());
                 statement.setBoolean(8, existingUser.getIsDeleted());
                 statement.setLong(9, id);
@@ -203,7 +243,7 @@ public class CarFleetService {
 
         return cars;
     }
-    
+
     public Cars getCarById(Long id) throws SQLException {
         Cars car = null;
 
@@ -305,7 +345,7 @@ public class CarFleetService {
         java.sql.Connection connection = connectDB.getConnection();
 
         // Execute the query
-        String sql = "SELECT L.id_location, L.latitude_location, L.longitude_location, L.date_location, L.time_location, L.id_car, C.registration_plate_car, C.name_car, C.isDeleted FROM locations L JOIN cars C ON L.id_car = C.id_car";
+        String sql = "SELECT L.id_location, L.latitude_location, L.longitude_location, L.date_location, L.time_location, L.id_car, C.registration_plate_car, C.name_car, C.isDeleted FROM locations L JOIN cars C ON L.id_car = C.id_car WHERE C.isDeleted = 'false'";
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -335,7 +375,7 @@ public class CarFleetService {
         java.sql.Connection connection = connectDB.getConnection();
 
         // Prepare the select statement
-        String sql = "SELECT L.id_location, L.latitude_location, L.longitude_location, L.date_location, L.time_location, L.id_car, C.registration_plate_car, C.name_car, C.isDeleted FROM locations L JOIN cars C ON L.id_car = C.id_car WHERE C.registration_plate_car = ?";
+        String sql = "SELECT L.id_location, L.latitude_location, L.longitude_location, L.date_location, L.time_location, L.id_car, C.registration_plate_car, C.name_car, C.isDeleted FROM locations L JOIN cars C ON L.id_car = C.id_car WHERE C.registration_plate_car = ? AND C.isDeleted = 'false'";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             // Set the parameter for the select statement
             statement.setString(1, plate);
@@ -384,8 +424,8 @@ public class CarFleetService {
             // Execute the insert statement
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
-                // Location was successfully created in the database
-                return location;
+            	// Location was successfully created in the database
+            	return location;
             }
         }
 
@@ -406,7 +446,7 @@ public class CarFleetService {
             java.sql.Connection connection = connectDB.getConnection();
 
             // Prepare the update statement
-            String sql = "UPDATE locations SET latitude_location = ?, longitude_location = ? WHERE id_location IN (SELECT L.id_location FROM Locations L WHERE id_car = (SELECT C.id_car FROM Cars C WHERE C.registration_plate_car = ?))";
+            String sql = "UPDATE locations SET latitude_location = ?, longitude_location = ? WHERE id_location = (SELECT L.id_location FROM Locations L WHERE id_car = (SELECT C.id_car FROM Cars C WHERE C.registration_plate_car = ?))";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 // Set the parameters for the update statement
                 statement.setBigDecimal(1, existingLocation.getLatitude());
@@ -447,5 +487,4 @@ public class CarFleetService {
         // Close the database connection
         connectDB.disconnect();
     }
-
 }
