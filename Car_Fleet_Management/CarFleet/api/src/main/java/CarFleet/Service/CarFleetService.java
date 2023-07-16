@@ -34,8 +34,8 @@ public class CarFleetService {
         java.sql.Connection connection = connectDB.getConnection();
         String sql = "SELECT U.id_user, U.fname_user, U.lname_user, U.birthdate_user, U.username_user, U.email_user, U.password_user, U.nationality_user, N.nationality, U.isDeleted FROM Users U JOIN nationalities N ON U.nationality_user = N.id_nationality WHERE (U.username_user = ? OR U.email_user = ?) AND isDeleted = 0";
         try (PreparedStatement statement = ((java.sql.Connection) connection).prepareStatement(sql)) {
-            statement.setString(1, username_email);
-            statement.setString(2, password);
+        	statement.setString(1, username_email);
+            statement.setString(2, username_email);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Long userId = resultSet.getLong("id_user");
@@ -138,11 +138,9 @@ public class CarFleetService {
             String encryptedPassword = encryptor.encryptPassword(user.getPassword());
             statement.setString(6, encryptedPassword);
             
-            
             statement.setLong(7, user.getNationality().getId());
             statement.setBoolean(8, user.getIsDeleted());
-            
-            System.out.println(user);
+
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 1) {
                 // User was successfully created in the database
