@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
-@ComponentScan(basePackages = {"CarFleet.Controller", "CarFleet.Service"})
+@ComponentScan(basePackages = {"CarFleet"})
 public class CarFleetApiApplication {
 
 	public static void main(String[] args) {

@@ -26,15 +26,15 @@ public class CarFleetService {
     
 	                                      /* USERS SERVICES */
 	
-	public Users loginUser(String username_email, String password) throws SQLException{
-		Users user = null;
+	public User loginUser(String username_email, String password) throws SQLException{
+		User user = null;
 		
         connectDB.connect(); // Establish the database connection
 
         java.sql.Connection connection = connectDB.getConnection();
         String sql = "SELECT U.id_user, U.fname_user, U.lname_user, U.birthdate_user, U.username_user, U.email_user, U.password_user, U.nationality_user, N.nationality, U.isDeleted FROM Users U JOIN nationalities N ON U.nationality_user = N.id_nationality WHERE (U.username_user = ? OR U.email_user = ?) AND isDeleted = 0";
         try (PreparedStatement statement = ((java.sql.Connection) connection).prepareStatement(sql)) {
-        	statement.setString(1, username_email);
+            statement.setString(1, username_email);
             statement.setString(2, username_email);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -45,13 +45,13 @@ public class CarFleetService {
                 String username = resultSet.getString("username_user");
                 String email = resultSet.getString("email_user");
                 String password_user_db = resultSet.getString("password_user");
-                Nationalities nationality = new Nationalities(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
+                Nationality nationality = new Nationality(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
                 Boolean isDeleted = resultSet.getBoolean("isDeleted");
                 
                 Encrypt encryptor = new Encrypt();
 
                 if(encryptor.matches(password, password_user_db)) {
-                	user = new Users(userId, fname, lname, birthdate, username, email, password, nationality, isDeleted);
+                	user = new User(userId, fname, lname, birthdate, username, email, password, nationality, isDeleted);
                 }
             }
         } catch (SQLException e) {
@@ -60,8 +60,8 @@ public class CarFleetService {
         return user;
 	}
 	
-    public List<Users> getAllUsers() throws SQLException {
-        List<Users> users = new ArrayList<>();
+    public List<User> getAllUsers() throws SQLException {
+        List<User> users = new ArrayList<>();
 
         connectDB.connect(); // Establish the database connection
 
@@ -77,10 +77,10 @@ public class CarFleetService {
         	    String username = resultSet.getString("username_user");
         	    String email = resultSet.getString("email_user");
         	    String password = resultSet.getString("password_user");
-        	    Nationalities nationality = new Nationalities(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
+        	    Nationality nationality = new Nationality(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
         	    Boolean isDeleted = resultSet.getBoolean("isDeleted");
 
-        	    Users user = new Users(id, fname, lname, birthdate, username, email, password, nationality, isDeleted);
+        	    User user = new User(id, fname, lname, birthdate, username, email, password, nationality, isDeleted);
         	    users.add(user);
         	}
         }
@@ -90,8 +90,8 @@ public class CarFleetService {
         return users;
     }
 
-    public Users getUserById(Long id) throws SQLException {
-        Users user = null;
+    public User getUserById(Long id) throws SQLException {
+        User user = null;
 
         connectDB.connect(); // Establish the database connection
 
@@ -108,10 +108,10 @@ public class CarFleetService {
                 String username = resultSet.getString("username_user");
                 String email = resultSet.getString("email_user");
                 String password = resultSet.getString("password_user");
-                Nationalities nationality = new Nationalities(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
+                Nationality nationality = new Nationality(resultSet.getLong("nationality_user"), resultSet.getString("nationality"));
                 Boolean isDeleted = resultSet.getBoolean("isDeleted");
 
-                user = new Users(userId, fname, lname, birthdate, username, email, password, nationality, isDeleted);
+                user = new User(userId, fname, lname, birthdate, username, email, password, nationality, isDeleted);
             }
         } catch (SQLException e) {
             // Handle the exception appropriately
@@ -122,7 +122,7 @@ public class CarFleetService {
         return user;
     }
 
-    public Users createUser(Users user) throws SQLException {
+    public User createUser(User user) throws SQLException {
         connectDB.connect(); // Establish the database connection
 
         java.sql.Connection connection = connectDB.getConnection();
@@ -138,9 +138,10 @@ public class CarFleetService {
             String encryptedPassword = encryptor.encryptPassword(user.getPassword());
             statement.setString(6, encryptedPassword);
             
+            
             statement.setLong(7, user.getNationality().getId());
             statement.setBoolean(8, user.getIsDeleted());
-
+            
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 1) {
                 // User was successfully created in the database
@@ -156,8 +157,8 @@ public class CarFleetService {
         return null;
     }
 
-    public Users updateUser(Long id, Users updatedUser) throws SQLException {
-        Users existingUser = getUserById(id);
+    public User updateUser(Long id, User updatedUser) throws SQLException {
+        User existingUser = getUserById(id);
         if (existingUser != null) {
             existingUser.setFname(updatedUser.getFname());
             existingUser.setLname(updatedUser.getLname());
@@ -217,8 +218,8 @@ public class CarFleetService {
 
                                           /* CARS SERVICES */
     
-    public List<Cars> getAllCars() throws SQLException {
-        List<Cars> cars = new ArrayList<>();
+    public List<Car> getAllCars() throws SQLException {
+        List<Car> cars = new ArrayList<>();
 
         connectDB.connect(); // Establish the database connection
 
@@ -232,7 +233,7 @@ public class CarFleetService {
                 String nameCar = resultSet.getString("name_car");
                 Boolean isDeleted = resultSet.getBoolean("isDeleted");
                 
-                Cars car = new Cars(id, registrationPlate, nameCar, isDeleted);
+                Car car = new Car(id, registrationPlate, nameCar, isDeleted);
                 cars.add(car);
             }
         }
@@ -242,8 +243,8 @@ public class CarFleetService {
         return cars;
     }
 
-    public Cars getCarById(Long id) throws SQLException {
-        Cars car = null;
+    public Car getCarById(Long id) throws SQLException {
+        Car car = null;
 
         connectDB.connect(); // Establish the database connection
 
@@ -257,7 +258,7 @@ public class CarFleetService {
                 String nameCar = resultSet.getString("name_car");
                 Boolean isDeleted = resultSet.getBoolean("isDeleted");
 
-                car = new Cars(id, registrationPlate, nameCar, isDeleted);
+                car = new Car(id, registrationPlate, nameCar, isDeleted);
             }
         }
 
@@ -266,14 +267,14 @@ public class CarFleetService {
         return car;
     }
 
-    public Cars createCar(Cars car) throws SQLException {
+    public Car createCar(Car car) throws SQLException {
         connectDB.connect(); // Establish the database connection
 
         java.sql.Connection connection = connectDB.getConnection();
         String sql = "INSERT INTO Cars (registration_plate_car, name_car, isDeleted) VALUES (?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, car.getRegistrationPlate());
+        	statement.setString(1, car.getRegistrationPlate());
             statement.setString(2, car.getNameCar());
             statement.setBoolean(3, car.getIsDeleted());
             int rowsAffected = statement.executeUpdate();
@@ -288,8 +289,8 @@ public class CarFleetService {
         return null;
     }
 
-    public Cars updateCar(Long id, Cars updatedCar) throws SQLException {
-        Cars existingCar = getCarById(id);
+    public Car updateCar(Long id, Car updatedCar) throws SQLException {
+        Car existingCar = getCarById(id);
         if (existingCar != null) {
             existingCar.setRegistrationPlate(updatedCar.getRegistrationPlate());
             existingCar.setNameCar(updatedCar.getNameCar());
@@ -335,8 +336,8 @@ public class CarFleetService {
 
                                        /* LOCATIONS SERVICES */
     
-    public List<Locations> getAllLocations() throws SQLException {
-        List<Locations> locations = new ArrayList<>();
+    public List<Location> getAllLocations() throws SQLException {
+        List<Location> locations = new ArrayList<>();
         
         connectDB.connect(); // Establish the database connection
         
@@ -352,9 +353,9 @@ public class CarFleetService {
                 String longitude = resultSet.getString("longitude_location");
                 LocalDate date = resultSet.getDate("date_location").toLocalDate();
                 LocalTime time = resultSet.getTime("time_location").toLocalTime();
-                Cars car = new Cars(resultSet.getLong("id_car"), resultSet.getString("registration_plate_car"), resultSet.getString("name_car"), resultSet.getBoolean("isDeleted"));
+                Car car = new Car(resultSet.getLong("id_car"), resultSet.getString("registration_plate_car"), resultSet.getString("name_car"), resultSet.getBoolean("isDeleted"));
 
-                Locations location = new Locations(id, NumberUtils.parseNumber(latitude, BigDecimal.class), NumberUtils.parseNumber(longitude, BigDecimal.class), date, time, car);
+                Location location = new Location(id, NumberUtils.parseNumber(latitude, BigDecimal.class), NumberUtils.parseNumber(longitude, BigDecimal.class), date, time, car);
                 locations.add(location);
             }
         }
@@ -365,8 +366,8 @@ public class CarFleetService {
         return locations;
     }
 
-    public Locations getLocationByRegistrationPlate(String plate) throws SQLException {
-        Locations location = null;
+    public Location getLocationByRegistrationPlate(String plate) throws SQLException {
+        Location location = null;
 
         connectDB.connect(); // Establish the database connection
         
@@ -392,10 +393,10 @@ public class CarFleetService {
                     boolean isCarDeleted = resultSet.getBoolean("isDeleted");
 
                     // Create the Cars object
-                    Cars car = new Cars(carId, registrationPlate, carName, isCarDeleted);
+                    Car car = new Car(carId, registrationPlate, carName, isCarDeleted);
 
                     // Create the Locations object
-                    location = new Locations(id, latitude, longitude, date, time, car);
+                    location = new Location(id, latitude, longitude, date, time, car);
                 }
             }
         }
@@ -406,18 +407,18 @@ public class CarFleetService {
         return location;
     }
 
-    public Locations createLocation(Locations location) throws SQLException {
+    public Location createLocation(Location location) throws SQLException {
         connectDB.connect(); // Establish the database connection
         
         java.sql.Connection connection = connectDB.getConnection();
 
         // Prepare the insert statement
-        String sql = "INSERT INTO locations (latitude_location, longitude_location, date_location, time_location, id_car) VALUES (?, ?, GETDATE(), (SELECT CONVERT(TIME(0),GETDATE())), ?)";
+        String sql = "INSERT INTO locations (latitude_location, longitude_location, date_location, time_location, id_car) VALUES (?, ?, GETDATE(), (SELECT CONVERT(TIME(0),GETDATE())), (SELECT id_car FROM cars WHERE registration_plate_car = ?))";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             // Set the values for the insert statement
             statement.setBigDecimal(1, location.getLatitude());
             statement.setBigDecimal(2, location.getLongitude());
-            statement.setLong(3, location.getCar().getId());
+            statement.setString(3, location.getCar().getRegistrationPlate());
 
             // Execute the insert statement
             int rowsAffected = statement.executeUpdate();
@@ -433,8 +434,8 @@ public class CarFleetService {
         return null;
     }
 
-    public Locations updateLocation(String plate, Locations updatedLocation) throws SQLException {
-        Locations existingLocation = getLocationByRegistrationPlate(plate);
+    public Location updateLocation(String plate, Location updatedLocation) throws SQLException {
+        Location existingLocation = getLocationByRegistrationPlate(plate);
         if (existingLocation != null) {
             existingLocation.setLatitude(updatedLocation.getLatitude());
             existingLocation.setLongitude(updatedLocation.getLongitude());
