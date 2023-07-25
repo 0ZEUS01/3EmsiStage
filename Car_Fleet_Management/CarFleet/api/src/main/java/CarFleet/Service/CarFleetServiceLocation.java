@@ -143,7 +143,7 @@ public class CarFleetServiceLocation {
 			java.sql.Connection connection = connectDB.getConnection();
 
 			// Prepare the update statement
-			String sql = "UPDATE locations SET latitude_location = ?, longitude_location = ? WHERE id_location = (SELECT L.id_location FROM Locations L WHERE id_car = (SELECT C.id_car FROM Cars C WHERE C.registration_plate_car = ?))";
+			String sql = "UPDATE locations SET latitude_location = ?, longitude_location = ?, date_location = GETDATE(), time_location = (SELECT CONVERT(TIME(0),GETDATE())) WHERE id_location = (SELECT L.id_location FROM Locations L WHERE id_car = (SELECT C.id_car FROM Cars C WHERE C.registration_plate_car = ?))";
 			try (PreparedStatement statement = connection.prepareStatement(sql)) {
 				// Set the parameters for the update statement
 				statement.setBigDecimal(1, existingLocation.getLatitude());
