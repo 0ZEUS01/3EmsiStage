@@ -81,3 +81,32 @@ CREATE TABLE locations
 	CONSTRAINT PK_LOCATIONS PRIMARY KEY (id_location),
 	CONSTRAINT FK_LOCATIONS_CARS FOREIGN KEY (id_car) REFERENCES cars(id_car)
 )
+GO
+CREATE TABLE locations_history(
+	id_history BIGINT IDENTITY,
+	latitude_history NVARCHAR(MAX),
+	longitude_history NVARCHAR(MAX),
+	date_history DATE,
+	time_history TIME,
+	id_car BIGINT, -- FOREIGN KEY
+	CONSTRAINT PK_LOCATIONS_HISTORY PRIMARY KEY (id_history),
+	CONSTRAINT FK_LOCATIONS_HISTORY_CARS FOREIGN KEY (id_car) REFERENCES cars(id_car)
+)
+GO
+CREATE OR ALTER TRIGGER Trg_LocationUpdates 
+ON locations 
+AFTER UPDATE
+AS
+BEGIN
+    DECLARE @old_latitude NVARCHAR(MAX), @old_longitude NVARCHAR(MAX), @old_date DATE, @old_time TIME, @old_id_car BIGINT;
+
+    SELECT @old_latitude = latitude_location,
+           @old_longitude = longitude_location,
+           @old_date = date_location,
+           @old_time = time_location,
+           @old_id_car = id_car
+    FROM DELETED;
+
+    INSERT INTO locations_history (latitude_history, longitude_location, date_history, time_history, id_car)
+    VALUES (@old_latitude, @old_longitude, @old_date, @old_time, @old_id_car);
+END;
