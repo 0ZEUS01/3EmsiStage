@@ -43,7 +43,6 @@ public class BackgroundLocationService extends Service {
     private SharedPreferences sharedPreferences;
     private static final String SHARED_PREFS_KEY = "com.example.carfleet.sharedprefs";
     private static final String REGISTRATION_PLATE_KEY = "registration_plate";
-    private static final String CAR_NAME_KEY = "car_name";
 
     private PowerManager.WakeLock wakeLock;
 
@@ -68,15 +67,13 @@ public class BackgroundLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelId = createNotificationChannel();
-            Notification notification = new NotificationCompat.Builder(this, channelId)
-                    .setContentTitle("Background Location Service")
-                    .setContentText("Service is running in the background")
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .build();
-            startForeground(NOTIFICATION_ID, notification);
-        }
+        String channelId = createNotificationChannel();
+        Notification notification = new NotificationCompat.Builder(this, channelId)
+                .setContentTitle("Background Location Service")
+                .setContentText("Service is running in the background")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build();
+        startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
 
@@ -99,7 +96,6 @@ public class BackgroundLocationService extends Service {
 
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(5000); // 5 seconds
         locationRequest.setFastestInterval(3000); // 3 seconds
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -156,7 +152,6 @@ public class BackgroundLocationService extends Service {
         // Retrieve Registration Plate And Car Name
         sharedPreferences = getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
         String savedRegistrationPlate = sharedPreferences.getString(REGISTRATION_PLATE_KEY, "");
-        String savedCarName = sharedPreferences.getString(CAR_NAME_KEY, "");
 
         showToast("This Is The Stored Registration Plate : " + savedRegistrationPlate);
 
