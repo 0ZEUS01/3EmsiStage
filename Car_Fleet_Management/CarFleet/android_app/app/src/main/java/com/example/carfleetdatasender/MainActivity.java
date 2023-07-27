@@ -27,8 +27,6 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
     private Button btnRegister;
     private EditText txtRegistrationPlate;
-    private EditText txtCarName;
-
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private boolean isLocationPermissionGranted = false;
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private static final String SHARED_PREFS_KEY = "com.example.carfleet.sharedprefs";
     private static final String REGISTRATION_PLATE_KEY = "registration_plate";
-    private static final String CAR_NAME_KEY = "car_name";
     private static final String REG_BUTTON = "true";
 
 
@@ -49,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnRegister = findViewById(R.id.btnRegister);
         txtRegistrationPlate = findViewById(R.id.txtRegistrationPlate);
-        txtCarName = findViewById(R.id.txtCarName);
 
         isLocationPermissionGranted = checkLocationPermission();
         if (!isLocationPermissionGranted) {
@@ -63,12 +59,10 @@ public class MainActivity extends AppCompatActivity {
         // Retrieve Registration Plate And Car Name
         sharedPreferences = getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
         String savedRegistrationPlate = sharedPreferences.getString(REGISTRATION_PLATE_KEY, "");
-        String savedCarName = sharedPreferences.getString(CAR_NAME_KEY, "");
         String savedRegisterButton = sharedPreferences.getString(REG_BUTTON, "");
 
         // Setting The Values To The Inputs
         txtRegistrationPlate.setText(savedRegistrationPlate);
-        txtCarName.setText(savedCarName);
         if(!savedRegisterButton.isEmpty()){
             btnRegister.setEnabled(Boolean.valueOf(savedRegisterButton));
         }
@@ -78,62 +72,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String registrationPlate = txtRegistrationPlate.getText().toString();
-                String carName = txtCarName.getText().toString();
-                if (registrationPlate.isEmpty() || carName.isEmpty()) {
+                if (registrationPlate.isEmpty()) {
                     showToast("Please Fill The Inputs");
                 } else {
                     // Saving The Values
-                    saveUserInput(registrationPlate, carName);
+                    saveUserInput(registrationPlate);
 
-                    showToast("Car Registration Plate : " + registrationPlate + " || Car Name : " + carName);
+                    showToast("Car Registration Plate : " + registrationPlate);
 
                     // Log message to track the start of the HTTP request
                     Log.d("API_REQUEST", "Sending data to the api...");
 
-                    // Register The Car In The DataBase Using The API
-                    registerCar(registrationPlate, carName);
+                    // Register The Car Location In The DataBase Using The API
+                    registerLocation(registrationPlate);
                 }
             }
         });
     }
-
-    private void registerCar(String registrationPlate, String carName) {
-        RequestSender RS = new RequestSender();
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("registrationPlate", registrationPlate);
-            jsonObject.put("nameCar", carName);
-            jsonObject.put("isDeleted", false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            showToast(e.toString());
-        }
-
-        RS.sendPostRequest("/api/cars", jsonObject, new RequestCallback() {
-            @Override
-            public void onRequestCompleted(boolean success) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (success) {
-                            showToast("Car registration successful!");
-                            // Log message to track successful API response
-                            Log.d("API_RESPONSE", "Car registration successful!");
-
-                            registerLocation(registrationPlate, carName);
-                        } else {
-                            showToast("Failed to register car.");
-                            // Log message to track failed API response
-                            Log.d("API_RESPONSE", "Failed to register car.");
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private void registerLocation(String registrationPlate, String carName) {
+    private void registerLocation(String registrationPlate) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -164,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject carJson = new JSONObject();
                         carJson.put("id", null);
                         carJson.put("registrationPlate", registrationPlate);
-                        carJson.put("nameCar", carName);
+                        carJson.put("nameCar", "RANDOMTEXT");
                         carJson.put("isDeleted", false);
                         // Add the car JSON object to the location JSON object
                         locationJson.put("car", carJson);
@@ -229,10 +185,9 @@ public class MainActivity extends AppCompatActivity {
                 LOCATION_PERMISSION_REQUEST_CODE
         );
     }
-    private void saveUserInput(String registrationPlate, String carName) {
+    private void saveUserInput(String registrationPlate) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(REGISTRATION_PLATE_KEY, registrationPlate);
-        editor.putString(CAR_NAME_KEY, carName);
         editor.apply();
     }
     private void saveButtonRegister(String isLocked){
