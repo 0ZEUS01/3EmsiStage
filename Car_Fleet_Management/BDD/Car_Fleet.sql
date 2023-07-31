@@ -107,6 +107,6 @@ BEGIN
            @old_id_car = id_car
     FROM DELETED;
 
-    INSERT INTO locations_history (latitude_history, longitude_location, date_history, time_history, id_car)
+    INSERT INTO locations_history (latitude_history, longitude_history, date_history, time_history, id_car)
     VALUES (@old_latitude, @old_longitude, @old_date, @old_time, @old_id_car);
 END;
