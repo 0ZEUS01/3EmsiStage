@@ -83,8 +83,19 @@ public class MainActivity extends AppCompatActivity {
                     // Log message to track the start of the HTTP request
                     Log.d("API_REQUEST", "Sending data to the api...");
 
-                    // Register The Car Location In The DataBase Using The API
-                    registerLocation(registrationPlate);
+                    RequestSender RS = new RequestSender();
+
+                    if (RS.checkApiResponse(registrationPlate)) {
+                        // Register The Car Location In The DataBase Using The API
+                        registerLocation(registrationPlate);
+                    } else {
+                        // Location created successfully, now start receiving location updates
+                        showToast("Start receiving location updates.");
+
+                        // Start the LocationForegroundService when the activity is created
+                        Intent serviceIntent = new Intent(MainActivity.this, BackgroundLocationService.class);
+                        startService(serviceIntent);
+                    }
                 }
             }
         });
@@ -169,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     // Method to check if location permission is granted
     private boolean checkLocationPermission() {

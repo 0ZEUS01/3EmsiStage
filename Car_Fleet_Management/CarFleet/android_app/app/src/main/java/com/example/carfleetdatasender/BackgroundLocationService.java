@@ -44,17 +44,9 @@ public class BackgroundLocationService extends Service {
     private static final String SHARED_PREFS_KEY = "com.example.carfleet.sharedprefs";
     private static final String REGISTRATION_PLATE_KEY = "registration_plate";
 
-    private PowerManager.WakeLock wakeLock;
-
-    @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Acquire a partial wake lock to keep the screen on
-        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
-        wakeLock.acquire();
 
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
@@ -80,11 +72,6 @@ public class BackgroundLocationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Release the wake lock when the service is stopped
-        if (wakeLock != null && wakeLock.isHeld()) {
-            wakeLock.release();
-            wakeLock = null;
-        }
         stopLocationUpdates();
     }
 
@@ -96,10 +83,10 @@ public class BackgroundLocationService extends Service {
 
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(5000); // 5 seconds
-        locationRequest.setFastestInterval(3000); // 3 seconds
+        locationRequest.setInterval(8000); // 5 seconds
+        locationRequest.setFastestInterval(5000); // 5 seconds
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setSmallestDisplacement(10); // 10 meters
+        locationRequest.setSmallestDisplacement(40); // 40 meters
     }
 
     // Create the location callback

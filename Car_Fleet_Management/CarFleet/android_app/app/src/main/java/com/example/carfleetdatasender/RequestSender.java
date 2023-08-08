@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -77,5 +79,50 @@ public class RequestSender {
 
         // Shutdown the executor to release resources after the task is done (optional).
         executor.shutdown();
+    }
+
+    public boolean checkApiResponse(final String registrationPlate) {
+        final boolean[] responseAvailable = {false}; // Using an array to store the result
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
+                String url = "http://sbapi.ddns.net:8082/api/locations/" + registrationPlate;
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .get()
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+
+                    if (!response.isSuccessful()) {
+                        // Handle the non-successful response, e.g., show an error message
+                        return;
+                    }
+
+                    String responseBody = response.body().string();
+                    // Check if the response is not empty
+                    if (responseBody.isEmpty()) {
+                        responseAvailable[0] = true;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+        try {
+            // Wait for the thread to finish
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return responseAvailable[0];
     }
 }
