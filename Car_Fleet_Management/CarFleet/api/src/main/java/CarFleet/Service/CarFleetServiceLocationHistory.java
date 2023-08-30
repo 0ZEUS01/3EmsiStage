@@ -23,11 +23,9 @@ public class CarFleetServiceLocationHistory {
                                  /* CONSTRUCTOR INITIALIZE ConnectDB SERVICES */
 	
 	private ConnectDB connectDB;
-	private final CarFleetLocationWebSocketHandler webSocketHandler;
 	
 	public CarFleetServiceLocationHistory(CarFleetLocationWebSocketHandler webSocketHandler) {
 		connectDB = new ConnectDB();
-		this.webSocketHandler = webSocketHandler;
 	}
 	
 	                                    /* LOCATIONS HISTORY SERVICES */
