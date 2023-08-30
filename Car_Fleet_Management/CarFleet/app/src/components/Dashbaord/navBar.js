@@ -20,12 +20,13 @@ const pages = [
   { label: 'Cars', route: '/CarFleet/Cars' },
   { label: 'Locations', route: '/CarFleet/Locations' },
   { label: 'History', route: '/CarFleet/LocationsHistory' },
+  { label: 'Users', route: '/CarFleet/Users' },
 ];
 
 const settings = [
-    { label: 'Account', route: '/CarFleet/Account/Profile' },
-    { label: 'Logout', action: 'logout' },
-  ];
+  { label: 'Account', route: '/CarFleet/Account/Profile' },
+  { label: 'Logout', action: 'logout' },
+];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -50,7 +51,7 @@ function ResponsiveAppBar() {
     if (action === 'logout') {
       // Remove the userData from local storage when the user clicks "Logout"
       localStorage.removeItem('userData');
-  
+
       // Redirect the user to the login page or another appropriate page
       // Replace '/CarFleet/Login' with the appropriate route for the login page
       window.location.href = '/CarFleet/Login';

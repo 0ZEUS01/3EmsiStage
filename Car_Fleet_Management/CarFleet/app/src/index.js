@@ -11,12 +11,13 @@ import Cars from './components/Dashbaord/Cars';
 import Locations from './components/Dashbaord/Locations'
 import LocationsHistory from './components/Dashbaord/LocationsHistory'
 import Profile from './components/Dashbaord/Profile'
+import Users from './components/Dashbaord/Users'
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="*" element={<Login />} />
+        <Route path="*" element={<Dashboard />} />
         <Route path="/CarFleet/Login" element={<Login />} />
         <Route path="/CarFleet/ResetPassword" element={<ForgotPassword />} />
         <Route path="/CarFleet/Dashboard" element={<Dashboard />} />
@@ -24,6 +25,7 @@ ReactDOM.render(
         <Route path="/CarFleet/Locations" element={<Locations />} />
         <Route path="/CarFleet/LocationsHistory" element={<LocationsHistory />} />
         <Route path="/CarFleet/Account/Profile" element={<Profile />} />
+        <Route path="/CarFleet/Users" element={<Users />} />
       </Routes>
     </Router>
   </React.StrictMode>,

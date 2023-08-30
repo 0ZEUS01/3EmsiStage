@@ -9,8 +9,24 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { CardActionArea } from '@mui/material';
 import CardMedia from '@mui/material/CardMedia';
+import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
+
+    // Hook to access navigation function
+    const navigate = useNavigate();
+
+    // Function to check if "userData" exists in local storage
+    useEffect(() => {
+        const userData = localStorage.getItem('userData');
+        if (!userData) {
+            // Redirect to the desired page if "userData" doesn't exist
+            navigate('/CarFleet/Login');
+        }
+    }, [navigate]);
+
     // Hook to check if the user prefers dark mode
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -29,7 +45,7 @@ function Dashboard() {
     const [numberOfCars, setNumberOfCars] = React.useState(0);
     // State to store the number of users
     const [numberOfUsers, setNumberOfUsers] = React.useState(0);
-    
+
     // Function to fetch the number of cars from the API
     React.useEffect(() => {
         const fetchCarsData = async () => {
@@ -68,6 +84,11 @@ function Dashboard() {
         fetchData();
     }, []);
 
+    // Add a custom style object to remove the underline from the Link
+    const linkStyle = {
+        textDecoration: 'none',
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -79,38 +100,41 @@ function Dashboard() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Grid container spacing={1} justifyContent="center">
                     <Grid item xs={12} md={4}>
-                        {/* Use xs={12} to take full width on small screens and md={4} to take one-third width on medium screens and larger */}
-                        <Card>
-                            <CardActionArea>
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image="https://clipart-library.com/images/kcKnqoK6i.png"
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
-                                        Numbers of cars: {numberOfCars}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
+                        <Link to="/CarFleet/Cars" style={linkStyle}> {/* Applying the custom style */}
+                            <Card>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="200"
+                                        image="https://clipart-library.com/images/kcKnqoK6i.png"
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            Numbers of cars: {numberOfCars}
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                        </Link>
                     </Grid>
                     <Grid item xs={12} md={4}>
                         {/* Use xs={12} to take full width on small screens and md={4} to take one-third width on medium screens and larger */}
-                        <Card>
-                            <CardActionArea>
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image="https://cdn-icons-png.flaticon.com/512/2302/2302386.png"
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
-                                        Numbers of users: {numberOfUsers}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
+                        <Link to="/CarFleet/Users" style={linkStyle}> {/* Applying the custom style */}
+                            <Card>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="200"
+                                        image="https://cdn-icons-png.flaticon.com/512/2302/2302386.png"
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            Numbers of admins: {numberOfUsers}
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                        </Link>
                     </Grid>
                 </Grid>
             </div>

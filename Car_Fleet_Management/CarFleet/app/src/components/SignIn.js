@@ -33,10 +33,10 @@ function SignInSide() {
     const initialCredentials = storedCredentials
         ? JSON.parse(storedCredentials)
         : {
-              email: '',
-              password: '',
-              rememberMe: false,
-          };
+            email: '',
+            password: '',
+            rememberMe: false,
+        };
 
     const [credentials, setCredentials] = React.useState(initialCredentials);
 

@@ -7,12 +7,26 @@ import L from 'leaflet';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CssBaseline from '@mui/material/CssBaseline';
+import { useNavigate } from 'react-router-dom';
 
 import 'leaflet/dist/leaflet.css';
 
 import ResponsiveAppBar from './navBar';
 
 const LocationsHistory = () => {
+  // Hook to access navigation function
+  const navigate = useNavigate();
+
+  // Function to check if "userData" exists in local storage
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      // Redirect to the desired page if "userData" doesn't exist
+      navigate('/CarFleet/Login');
+    }
+  }, [navigate]);
+
+
   const [cars, setCars] = useState([]); // State to store the list of cars' registration plates
   const [selectedPlate, setSelectedPlate] = useState(''); // State to store the selected car's registration plate
   const [locationHistory, setLocationHistory] = useState([]); // State to store the selected car's location history
@@ -73,7 +87,7 @@ const LocationsHistory = () => {
       <br />
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        Select Registration Plate To Trace The Car:
+        Select Registration Plate To Trace The Car :
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -107,14 +121,14 @@ const LocationsHistory = () => {
           {/* Display markers for the selected car's location history */}
           {locationHistory.map(location => (
             <Marker key={location.id} position={[location.latitude, location.longitude]} icon={
-                L.icon({
-                  iconUrl:
-                    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Simpleicons_Places_map-marker-point.svg/2048px-Simpleicons_Places_map-marker-point.svg.png',
-                  iconSize: [20, 20],
-                  iconAnchor: [10, 10], // Adjust this as needed
-                  popupAnchor: [0, -10], // Adjust this as needed
-                })
-              }>
+              L.icon({
+                iconUrl:
+                  'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Simpleicons_Places_map-marker-point.svg/2048px-Simpleicons_Places_map-marker-point.svg.png',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10], // Adjust this as needed
+                popupAnchor: [0, -10], // Adjust this as needed
+              })
+            }>
               <Popup>
                 {`Date: ${location.date} Time: ${location.time}`}
               </Popup>
