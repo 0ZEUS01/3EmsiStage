@@ -3,8 +3,11 @@ package com.example.carfleetdatasender;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -82,47 +85,40 @@ public class RequestSender {
     }
 
     public boolean checkApiResponse(final String registrationPlate) {
-        final boolean[] responseAvailable = {false}; // Using an array to store the result
+        OkHttpClient client = new OkHttpClient();
+        String url = "http://sbapi.ddns.net:8082/api/locations/" + registrationPlate;
 
-        Thread thread = new Thread(new Runnable() {
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        FutureTask<Boolean> responseFuture = new FutureTask<>(new Callable<Boolean>() {
             @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-                String url = "http://sbapi.ddns.net:8082/api/locations/" + registrationPlate;
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .get()
-                        .build();
-
-                try {
-                    Response response = client.newCall(request).execute();
-
+            public Boolean call() throws Exception {
+                try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
                         // Handle the non-successful response, e.g., show an error message
-                        return;
+                        return false;
                     }
 
                     String responseBody = response.body().string();
                     // Check if the response is not empty
-                    if (responseBody.isEmpty()) {
-                        responseAvailable[0] = true;
-                    }
+                    return !responseBody.isEmpty();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return false;
                 }
             }
         });
 
-        thread.start();
+        new Thread(responseFuture).start();
 
         try {
-            // Wait for the thread to finish
-            thread.join();
-        } catch (InterruptedException e) {
+            return responseFuture.get(); // Blocking call to get the result
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            return false;
         }
-
-        return responseAvailable[0];
     }
 }

@@ -26,15 +26,16 @@ public class BootReceiver extends BroadcastReceiver {
 
         // Check if the savedRegistrationPlate is empty or not
         if (savedRegistrationPlate.isEmpty()) {
-            Log.d("BootReceiver", "Starting MainActivity");
-            Intent activityIntent = new Intent(context, MainActivity.class);
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(activityIntent);
+            Toast.makeText(context, "App Should Be Configured", Toast.LENGTH_LONG).show();
         } else {
             Log.d("BootReceiver", "Starting BackgroundLocationService");
             Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
-            // Make sure the serviceIntent has the necessary extras if needed
-            context.startService(serviceIntent);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent);
+            } else {
+                context.startService(serviceIntent);
+            }
         }
     }
 }

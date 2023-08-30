@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                     RequestSender RS = new RequestSender();
 
-                    if (RS.checkApiResponse(registrationPlate)) {
+                    if (!RS.checkApiResponse(registrationPlate)) {
                         // Register The Car Location In The DataBase Using The API
                         registerLocation(registrationPlate);
                     } else {

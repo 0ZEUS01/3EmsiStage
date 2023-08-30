@@ -83,10 +83,10 @@ public class BackgroundLocationService extends Service {
 
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(8000); // 5 seconds
-        locationRequest.setFastestInterval(5000); // 5 seconds
+        locationRequest.setInterval(6000); // 6 seconds
+        locationRequest.setFastestInterval(3000); // 3 seconds
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setSmallestDisplacement(40); // 40 meters
+        locationRequest.setSmallestDisplacement(20); // 20 meters
     }
 
     // Create the location callback
