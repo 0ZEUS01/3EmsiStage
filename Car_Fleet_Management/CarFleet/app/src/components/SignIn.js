@@ -22,6 +22,9 @@ import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 
 function SignInSide() {
+    // Getting the api url
+    const apiUrl = process.env.REACT_APP_API_IP;
+
     const [openSuccessSnackbar, setOpenSuccessSnackbar] = React.useState(false);
     const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
 
@@ -91,8 +94,8 @@ function SignInSide() {
         };
 
         try {
-            // Replace 'http://sbapi.ddns.net:8082/api/login' with the actual endpoint URL
-            const response = await axios.post('http://sbapi.ddns.net:8082/api/login', requestBody);
+            // Replace apiUrl + '/api/login' with the actual endpoint URL
+            const response = await axios.post(apiUrl + '/api/login', requestBody);
 
             // Assuming the response contains user data as shown in the example
             const userData = response.data;

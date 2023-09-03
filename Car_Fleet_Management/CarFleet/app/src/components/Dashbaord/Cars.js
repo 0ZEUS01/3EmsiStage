@@ -21,6 +21,9 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 const CarList = () => {
+  // Getting the api url
+  const apiUrl = process.env.REACT_APP_API_IP;
+
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -68,7 +71,7 @@ const CarList = () => {
 
   const handleCreateDialogSubmit = () => {
     // Make POST request to create a new car
-    Axios.post('http://sbapi.ddns.net:8082/api/cars', newCarData)
+    Axios.post(apiUrl + '/api/cars', newCarData)
       .then(response => {
         // Refresh the cars list with the new car
         setCars(prevCars => [...prevCars, response.data]);
@@ -101,7 +104,7 @@ const CarList = () => {
 
   const handleEditSubmit = () => {
     // Make PUT request to update car
-    Axios.put(`http://sbapi.ddns.net:8082/api/cars/${selectedCar.id}`, editedCar)
+    Axios.put(apiUrl + `/api/cars/${selectedCar.id}`, editedCar)
       .then(response => {
         // Update the cars list with the updated car
         setCars(prevCars => prevCars.map(car => car.id === selectedCar.id ? response.data : car));
@@ -120,7 +123,7 @@ const CarList = () => {
 
   const handleDeleteConfirm = () => {
     // Make DELETE request to delete car
-    Axios.delete(`http://sbapi.ddns.net:8082/api/cars/${selectedCar.id}`)
+    Axios.delete(apiUrl + `/api/cars/${selectedCar.id}`)
       .then(() => {
         // Remove the deleted car from the cars list
         setCars(prevCars => prevCars.filter(car => car.id !== selectedCar.id));
@@ -150,10 +153,10 @@ const CarList = () => {
 
   useEffect(() => {
     // Fetch cars data from the API
-    Axios.get('http://sbapi.ddns.net:8082/api/cars')
+    Axios.get(apiUrl + '/api/cars')
       .then(response => setCars(response.data))
       .catch(error => console.error(error));
-  }, []);
+  }, [apiUrl]);
 
   const handleSuccessSnackbarOpen = (message) => {
     setSnackbarMessage(message);

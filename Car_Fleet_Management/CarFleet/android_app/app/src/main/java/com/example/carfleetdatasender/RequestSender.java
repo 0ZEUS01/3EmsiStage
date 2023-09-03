@@ -1,5 +1,6 @@
 package com.example.carfleetdatasender;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -84,41 +85,37 @@ public class RequestSender {
         executor.shutdown();
     }
 
-    public boolean checkApiResponse(final String registrationPlate) {
+    public void checkApiResponse(final String registrationPlate, final ApiResponseCallback callback) {
         OkHttpClient client = new OkHttpClient();
-        String url = "http://sbapi.ddns.net:8082/api/locations/" + registrationPlate;
+        String url = static_api_ip + "/api/locations/" + registrationPlate;
 
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
 
-        FutureTask<Boolean> responseFuture = new FutureTask<>(new Callable<Boolean>() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public Boolean call() throws Exception {
-                try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        // Handle the non-successful response, e.g., show an error message
-                        return false;
-                    }
-
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    // Check if the response is not empty
-                    return !responseBody.isEmpty();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
+                    boolean responseAvailable = !responseBody.isEmpty();
+                    callback.onResponseAvailable(responseAvailable);
+                } else {
+                    // Handle the non-successful response, e.g., show an error message
+                    callback.onResponseAvailable(false);
                 }
             }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                callback.onResponseAvailable(false);
+            }
         });
+    }
 
-        new Thread(responseFuture).start();
-
-        try {
-            return responseFuture.get(); // Blocking call to get the result
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public interface ApiResponseCallback {
+        void onResponseAvailable(boolean responseAvailable);
     }
 }

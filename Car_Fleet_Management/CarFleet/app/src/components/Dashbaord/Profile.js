@@ -18,6 +18,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Profile = () => {
+  // Getting the api url
+  const apiUrl = process.env.REACT_APP_API_IP;
+  
   const navigate = useNavigate();
 
   const storedUserData = JSON.parse(localStorage.getItem('userData'));
@@ -41,7 +44,7 @@ const Profile = () => {
 
 
   useEffect(() => {
-    fetch('http://sbapi.ddns.net:8082/api/nationality')
+    fetch(apiUrl + '/api/nationality')
       .then(response => response.json())
       .then(data => {
         setNationalities(data);
@@ -57,7 +60,7 @@ const Profile = () => {
 
   const handleProfileUpdate = async (updatedData) => {
     try {
-      const response = await fetch(`http://sbapi.ddns.net:8082/api/users/${updatedData.id}`, {
+      const response = await fetch(apiUrl + `/api/users/${updatedData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

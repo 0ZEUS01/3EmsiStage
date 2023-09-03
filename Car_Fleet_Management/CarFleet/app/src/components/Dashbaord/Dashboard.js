@@ -14,6 +14,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
+    // Getting the api url
+    const apiUrl = process.env.REACT_APP_API_IP;
 
     // Hook to access navigation function
     const navigate = useNavigate();
@@ -50,7 +52,7 @@ function Dashboard() {
     React.useEffect(() => {
         const fetchCarsData = async () => {
             try {
-                const response = await fetch('http://sbapi.ddns.net:8082/api/cars');
+                const response = await fetch(apiUrl + '/api/cars');
                 if (response.ok) {
                     const data = await response.json();
                     // Filter the data to include only cars where isDeleted is false
@@ -72,7 +74,7 @@ function Dashboard() {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://sbapi.ddns.net:8082/api/users');
+                const response = await fetch(apiUrl + '/api/users');
                 if (response.ok) {
                     const data = await response.json();
                     // Calculate the number of users based on the array length

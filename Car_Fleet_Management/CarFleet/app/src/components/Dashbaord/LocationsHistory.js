@@ -14,6 +14,9 @@ import 'leaflet/dist/leaflet.css';
 import ResponsiveAppBar from './navBar';
 
 const LocationsHistory = () => {
+  // Getting the api url
+  const apiUrl = process.env.REACT_APP_API_IP;
+
   // Hook to access navigation function
   const navigate = useNavigate();
 
@@ -49,7 +52,7 @@ const LocationsHistory = () => {
 
   // Fetch the list of cars' registration plates from the API
   useEffect(() => {
-    axios.get('http://sbapi.ddns.net:8082/api/cars')
+    axios.get(apiUrl + '/api/cars')
       .then(response => {
         setCars(response.data);
       })
@@ -65,7 +68,7 @@ const LocationsHistory = () => {
 
     // Fetch the location history for the selected car
     axios
-      .get(`http://sbapi.ddns.net:8082/api/locations/${selectedCarPlate}/history`)
+      .get(apiUrl + `/api/locations/${selectedCarPlate}/history`)
       .then((response) => {
         const history = response.data;
         setLocationHistory(history);

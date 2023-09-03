@@ -85,17 +85,31 @@ public class MainActivity extends AppCompatActivity {
 
                     RequestSender RS = new RequestSender();
 
-                    if (!RS.checkApiResponse(registrationPlate)) {
-                        // Register The Car Location In The DataBase Using The API
-                        registerLocation(registrationPlate);
-                    } else {
-                        // Location created successfully, now start receiving location updates
-                        showToast("Start receiving location updates.");
+                    RS.checkApiResponse(registrationPlate, new RequestSender.ApiResponseCallback() {
+                        @Override
+                        public void onResponseAvailable(final boolean responseAvailable) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!responseAvailable) {
+                                        // Register The Car Location In The DataBase Using The API
+                                        registerLocation(registrationPlate);
+                                    } else {
+                                        // Location created successfully, now show the Toast on the main thread
+                                        showToast("Start receiving location updates.");
 
-                        // Start the LocationForegroundService when the activity is created
-                        Intent serviceIntent = new Intent(MainActivity.this, BackgroundLocationService.class);
-                        startService(serviceIntent);
-                    }
+                                        // Start the LocationForegroundService when the activity is created
+                                        Intent serviceIntent = new Intent(MainActivity.this, BackgroundLocationService.class);
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                            startForegroundService(serviceIntent);
+                                        } else {
+                                            startService(serviceIntent);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
@@ -162,9 +176,13 @@ public class MainActivity extends AppCompatActivity {
                                         showToast("Start receiving location updates.");
 
 
-                                        // Start the LocationForegroundService when the activity is created
                                         Intent serviceIntent = new Intent(MainActivity.this, BackgroundLocationService.class);
-                                        startService(serviceIntent);
+
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                            startForegroundService(serviceIntent);
+                                        } else {
+                                            startService(serviceIntent);
+                                        }
                                     }else{
                                         // Request failed, handle failure scenario
                                         showToast("Failed to create car location.");

@@ -25,6 +25,9 @@ import Alert from '@mui/material/Alert';
 import './Users.css'; // Import your custom CSS file
 
 const Users = () => {
+  // Getting the api url
+  const apiUrl = process.env.REACT_APP_API_IP;
+
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -54,7 +57,7 @@ const Users = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://sbapi.ddns.net:8082/api/users');
+      const response = await axios.get(apiUrl + '/api/users');
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -63,7 +66,7 @@ const Users = () => {
 
   const fetchNationalities = async () => {
     try {
-      const response = await axios.get('http://sbapi.ddns.net:8082/api/nationality');
+      const response = await axios.get(apiUrl + '/api/nationality');
       setNationalities(response.data);
     } catch (error) {
       console.error('Error fetching nationalities:', error);
@@ -106,7 +109,7 @@ const Users = () => {
           isDeleted: false
         };
 
-        await axios.put(`http://sbapi.ddns.net:8082/api/users/${editedUser.id}`, requestData);
+        await axios.put(apiUrl + `/api/users/${editedUser.id}`, requestData);
         setOpenEditDialog(false);
         fetchData();
         handleSuccessSnackbarOpen('User edited successfully.');
@@ -138,7 +141,7 @@ const Users = () => {
           isDeleted: false
         };
 
-        await axios.post('http://sbapi.ddns.net:8082/api/register', requestData);
+        await axios.post(apiUrl + '/api/register', requestData);
         setOpenCreateDialog(false);
         fetchData();
         handleSuccessSnackbarOpen('User created successfully.');
@@ -158,7 +161,7 @@ const Users = () => {
 
   const handleDeleteUser = async (userId) => {
     try {
-      await axios.delete(`http://sbapi.ddns.net:8082/api/users/${userId}`);
+      await axios.delete(apiUrl + `/api/users/${userId}`);
       setOpenDeleteDialog(false);
       setUserToDelete(null);
       fetchData();

@@ -29,6 +29,9 @@ function Copyright(props) {
 }
 
 export default function SignIn() {
+    // Getting the api url
+    const apiUrl = process.env.REACT_APP_API_IP;
+
     const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
     const [snackbarSeverity, setSnackbarSeverity] = React.useState('error'); // Default to 'error' for error messages
@@ -53,7 +56,7 @@ export default function SignIn() {
         const email = data.get('email');
 
         // Replace {username_email} with the actual email from the form
-        const url = `http://sbapi.ddns.net:8082/api/users/${email}/recover`;
+        const url = apiUrl + `/api/users/${email}/recover`;
 
         try {
             const response = await axios.get(url);

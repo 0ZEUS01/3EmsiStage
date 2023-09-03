@@ -15,6 +15,9 @@ import ResponsiveAppBar from './navBar';
 
 
 const Locations = () => {
+  // Getting the api url
+  const apiUrl = process.env.REACT_APP_API_IP;
+
   // Hook to access navigation function
   const navigate = useNavigate();
 
@@ -41,7 +44,7 @@ const Locations = () => {
       setSelectedCar(null);
     } else {
       axios
-        .get(`http://sbapi.ddns.net:8082/api/locations/${selectedPlate}`)
+        .get(apiUrl + `/api/locations/${selectedPlate}`)
         .then((response) => {
           setSelectedCar(response.data);
           setLocationsData([response.data]); // Update locationsData with the fetched data
@@ -69,7 +72,7 @@ const Locations = () => {
   // Function to fetch all locations data from the API
   const fetchLocationsData = () => {
     axios
-      .get('http://sbapi.ddns.net:8082/api/locations')
+      .get(apiUrl + '/api/locations')
       .then((response) => {
         setLocationsData(response.data);
       })
