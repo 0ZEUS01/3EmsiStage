@@ -53,8 +53,11 @@ function Dashboard() {
                 const response = await fetch('http://sbapi.ddns.net:8082/api/cars');
                 if (response.ok) {
                     const data = await response.json();
-                    // Assuming the API response returns a list of cars, we calculate the number of cars based on the array length
-                    setNumberOfCars(data.length);
+                    // Filter the data to include only cars where isDeleted is false
+                    const nonDeletedCars = data.filter(car => car.isDeleted === false);
+
+                    // Calculate the number of non-deleted cars based on the filtered array length
+                    setNumberOfCars(nonDeletedCars.length);
                 } else {
                     console.error('Failed to fetch car data from API');
                 }
@@ -73,7 +76,12 @@ function Dashboard() {
                 if (response.ok) {
                     const data = await response.json();
                     // Calculate the number of users based on the array length
-                    setNumberOfUsers(data.length);
+
+                    // Filter the data to include only users where isDeleted is false
+                    const nonDeletedUsers = data.filter(user => user.isDeleted === false);
+
+                    // Calculate the number of non-deleted users based on the filtered array length
+                    setNumberOfUsers(nonDeletedUsers.length);
                 } else {
                     console.error('Failed to fetch user data from API');
                 }
@@ -97,7 +105,7 @@ function Dashboard() {
 
             <br />
 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh' }}>
                 <Grid container spacing={1} justifyContent="center">
                     <Grid item xs={12} md={4}>
                         <Link to="/CarFleet/Cars" style={linkStyle}> {/* Applying the custom style */}
@@ -105,8 +113,12 @@ function Dashboard() {
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
-                                        height="200"
                                         image="https://clipart-library.com/images/kcKnqoK6i.png"
+                                        style={{
+                                            height: '350px', // Set a fixed height for the CardMedia
+                                            width: '100%',   // Set a fixed width to ensure the entire image fits
+                                            objectFit: 'contain', // Maintain aspect ratio and fit the entire image within the container
+                                        }}
                                     />
                                     <CardContent>
                                         <Typography gutterBottom variant="h5" component="div">
@@ -124,8 +136,12 @@ function Dashboard() {
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
-                                        height="200"
                                         image="https://cdn-icons-png.flaticon.com/512/2302/2302386.png"
+                                        style={{
+                                            height: '350px', // Set a fixed height for the CardMedia
+                                            width: '100%',   // Set a fixed width to ensure the entire image fits
+                                            objectFit: '', // Maintain aspect ratio and fit the entire image within the container
+                                        }}
                                     />
                                     <CardContent>
                                         <Typography gutterBottom variant="h5" component="div">

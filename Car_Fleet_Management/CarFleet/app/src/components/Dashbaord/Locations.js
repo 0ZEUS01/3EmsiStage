@@ -101,7 +101,7 @@ const Locations = () => {
       <br />
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        Select Registration Plate To Track :
+        Choose a registration plate to trace :
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -124,7 +124,7 @@ const Locations = () => {
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {/* Render the map container */}
-        <MapContainer center={[31.7782632, -9.7908949]} zoom={6} style={{ height: '600px', width: '100%' }}>
+        <MapContainer center={[31.7782632, -9.7908949]} zoom={6} style={{ height: '690px', width: '100%' }}>
           {/* Add the TileLayer component to show the map */}
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

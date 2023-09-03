@@ -12,6 +12,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import ResponsiveAppBar from './navBar';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,6 +25,9 @@ const Profile = () => {
   const [userData, setUserData] = useState(storedUserData);
   const [isEditing, setIsEditing] = useState(false);
   const [nationalities, setNationalities] = useState([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [isCancelled, setIsCancelled] = useState(false);
 
   const [formData, setFormData] = useState({
     fname: userData ? userData.fname : '',
@@ -31,6 +38,7 @@ const Profile = () => {
     birthdate: userData ? userData.birthdate : '',
     nationality: userData && userData.nationality ? userData.nationality.id : '',
   });
+
 
   useEffect(() => {
     fetch('http://sbapi.ddns.net:8082/api/nationality')
@@ -62,16 +70,25 @@ const Profile = () => {
         setUserData(updatedData);
         localStorage.setItem('userData', JSON.stringify(updatedData));
         setIsEditing(false);
+        handleSnackbarOpen('Profile updated successfully.'); // Show the Snackbar
       } else {
         console.error('Failed to update profile:', response.statusText);
+        handleSnackbarOpen('Failed to update profile.'); // Show the Snackbar
       }
     } catch (error) {
       console.error('Error updating profile:', error);
+      handleSnackbarOpen('Error updating profile. Please try again.'); // Show the Snackbar
     }
   };
 
   const handleEditButtonClick = () => {
     setIsEditing(true);
+    setIsCancelled(false);
+  };
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
+    setIsCancelled(true);
   };
 
   const handleSubmit = (event) => {
@@ -95,8 +112,14 @@ const Profile = () => {
     console.log('Profile updated:', updatedData);
   };
 
+  const handleSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setOpenSnackbar(true);
+  };
 
-
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+  };
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const theme = React.useMemo(
@@ -138,7 +161,7 @@ const Profile = () => {
                 id="fname"
                 label="First Name"
                 autoFocus
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 variant="standard"
                 onChange={(e) => setFormData({ ...formData, fname: e.target.value })}
                 defaultValue={userData ? userData.fname : ''}
@@ -152,7 +175,7 @@ const Profile = () => {
                 label="Last Name"
                 name="lname"
                 autoComplete="family-name"
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 variant="standard"
                 onChange={(e) => setFormData({ ...formData, lname: e.target.value })}
                 defaultValue={userData ? userData.lname : ''}
@@ -166,7 +189,7 @@ const Profile = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 variant="standard"
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 defaultValue={userData ? userData.email : ''}
@@ -179,7 +202,7 @@ const Profile = () => {
                 id="username"
                 label="Username"
                 name="username"
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 variant="standard"
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 defaultValue={userData ? userData.username : ''}
@@ -194,7 +217,7 @@ const Profile = () => {
                 type="password"
                 id="password"
                 autoComplete="new-password"
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 variant="standard"
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 defaultValue={userData ? userData.password : ''}
@@ -207,7 +230,7 @@ const Profile = () => {
                 name="birthdate"
                 type="date"
                 id="birthdate"
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 variant="standard"
                 onChange={(e) => setFormData({ ...formData, birthdate: e.target.value })}
                 defaultValue={userData ? userData.birthdate : ''}
@@ -221,7 +244,7 @@ const Profile = () => {
                 id="nationality"
                 variant="standard"
                 fullWidth
-                disabled={!isEditing} // Toggle disabled prop based on isEditing
+                disabled={!isEditing || isCancelled} // Toggle disabled prop based on isEditing
                 onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
                 value={formData.nationality}
               >
@@ -232,18 +255,72 @@ const Profile = () => {
                 ))}
               </TextField>
             </Grid>
-            <Button
-              type="button"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 4 }}
-              onClick={isEditing ? handleSubmit : handleEditButtonClick}
-            >
-              {isEditing ? 'Submit Modifications' : 'Enable Edit'}
-            </Button>
+            <Grid item xs={12}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                {isEditing ? (
+                  <div>
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      sx={{
+                        marginRight: { xs: 0, sm: 2 }, // No margin on extra-small (phone) screens
+                        width: { xs: '100%', sm: 'auto' }, // Full width on extra-small (phone) screens, auto width on others
+                        marginBottom: { xs: 1, sm: 0 }, // Margin bottom on extra-small (phone) screens, no margin on others
+                      }}
+                      onClick={handleCancelClick}
+                    >
+                      Cancel Modifications
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{
+                        width: { xs: '100%', sm: 'auto' }, // Full width on extra-small (phone) screens, auto width on others
+                      }}
+                    >
+                      SUBMIT MODIFICATIONS
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: { xs: 4, sm: 0 }, width: { xs: '100%', sm: 'auto' } }} // Full width on extra-small (phone) screens, auto width on others
+                    onClick={handleEditButtonClick}
+                  >
+                    Enable Edit
+                  </Button>
+                )}
+              </div>
+            </Grid>
+
+
+
           </Grid>
         </Box>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success" // You can change this to 'error' or 'info' as needed
+          action={
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackbarClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 };

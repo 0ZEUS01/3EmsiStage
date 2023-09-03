@@ -13,9 +13,41 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 
 function SignInSide() {
+    const [openSuccessSnackbar, setOpenSuccessSnackbar] = React.useState(false);
+    const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
+
+    // State variable to track password visibility
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    // Toggle password visibility
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleSuccessSnackbarClose = () => {
+        setOpenSuccessSnackbar(false);
+    };
+
+    const handleErrorSnackbarClose = () => {
+        setOpenErrorSnackbar(false);
+    };
+
+    const showSuccessSnackbar = () => {
+        setOpenSuccessSnackbar(true);
+    };
+
+    const showErrorSnackbar = () => {
+        setOpenErrorSnackbar(true);
+    };
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     const theme = React.useMemo(
@@ -74,14 +106,23 @@ function SignInSide() {
             }
 
             if (Object.keys(userData).length !== 0) {
+                showSuccessSnackbar(); // Show success message
                 // Store the user data in local storage
                 localStorage.setItem('userData', JSON.stringify(userData));
-                // Now, redirect to the dashboard page after successful login
-                window.location.href = '/CarFleet/Dashboard';
+
+                // Add a delay (e.g., 2 seconds) before redirection
+                setTimeout(() => {
+                    // Now, redirect to the dashboard page after successful login
+                    window.location.href = '/CarFleet/Dashboard';
+                }, 2000); // 2000 milliseconds = 2 seconds
+            }
+            else {
+                showErrorSnackbar(); // Show error message
             }
         } catch (error) {
             // Handle error if the login request fails
             console.error('Error during login:', error);
+            showErrorSnackbar(); // Show error message
         }
     };
 
@@ -139,12 +180,24 @@ function SignInSide() {
                                 fullWidth
                                 name="password"
                                 label="Password"
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 id="password"
                                 autoComplete="current-password"
                                 variant="standard"
                                 value={credentials.password}
                                 onChange={handleInputChange}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={togglePasswordVisibility}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
                             />
                             <FormControlLabel
                                 control={
@@ -171,7 +224,7 @@ function SignInSide() {
                             <Box mt={5}>
                                 <Typography variant="body2" color="text.secondary" align="center">
                                     {'Copyright © '}
-                                    <Link color="inherit" href="http://sbapi.ddns.net:3000">
+                                    <Link color="inherit" href="http://sbapi.ddns.net">
                                         CarFleetManagement
                                     </Link>{' '}
                                     {new Date().getFullYear()}
@@ -182,6 +235,26 @@ function SignInSide() {
                     </Box>
                 </Grid>
             </Grid>
+            <Snackbar
+                open={openSuccessSnackbar}
+                autoHideDuration={5000}
+                onClose={handleSuccessSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleSuccessSnackbarClose} severity="success" sx={{ width: '100%' }}>
+                    Login successful!
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={openErrorSnackbar}
+                autoHideDuration={5000}
+                onClose={handleErrorSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleErrorSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                    Login failed. Please check your credentials.
+                </Alert>
+            </Snackbar>
         </ThemeProvider>
     );
 }

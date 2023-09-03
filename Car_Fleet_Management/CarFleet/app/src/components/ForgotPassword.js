@@ -11,12 +11,15 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import axios from 'axios';
 
 function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="http://sbapi.ddns.net:3000">
+            <Link color="inherit" href="http://sbapi.ddns.net">
                 CarFleetManagement
             </Link>{' '}
             {new Date().getFullYear()}
@@ -26,14 +29,65 @@ function Copyright(props) {
 }
 
 export default function SignIn() {
-    const handleSubmit = (event) => {
+    const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
+    const [snackbarMessage, setSnackbarMessage] = React.useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = React.useState('error'); // Default to 'error' for error messages
+
+
+    const openSnackbar = (message) => {
+        setSnackbarMessage(message);
+        setOpenErrorSnackbar(true);
+    };
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorSnackbar(false);
+    };
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        const email = data.get('email');
+
+        // Replace {username_email} with the actual email from the form
+        const url = `http://sbapi.ddns.net:8082/api/users/${email}/recover`;
+
+        try {
+            const response = await axios.get(url);
+
+            if (response.status === 200 && response.data === 1) {
+                // Request was successful
+                console.log('Password recovery request successful');
+                setSnackbarSeverity('success'); // Set the severity to 'success'
+                openSnackbar('Password recovery successful');
+
+                // Add a delay (e.g., 2 seconds) before redirection
+                setTimeout(() => {
+                    // Now, redirect to the dashboard page after successful login
+                    window.location.href = '/CarFleet/Login';
+                }, 2000); // 2000 milliseconds = 2 seconds
+
+                // You might want to redirect or show a success message here
+            } else if (response.status === 200 && response.data === -1) {
+                // Request failed
+                console.error('Password recovery request failed');
+                openSnackbar('Password recovery failed');
+                // You might want to display an error message to the user
+            } else {
+                // Handle other status codes or unexpected responses here
+                console.error('Unexpected response:', response);
+                openSnackbar('An unexpected error occurred');
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+            openSnackbar('An error occurred while processing your request');
+            // Handle any network or other errors that occurred during the request
+        }
     };
+
 
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -98,6 +152,19 @@ export default function SignIn() {
                 </Box>
                 <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>
+            <Snackbar
+                open={openErrorSnackbar}
+                autoHideDuration={5000} // Adjust the duration as needed
+                onClose={handleSnackbarClose}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} elevation={6} variant="filled">
+                    {snackbarMessage}
+                </MuiAlert>
+            </Snackbar>
         </ThemeProvider>
     );
 }

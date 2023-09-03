@@ -17,8 +17,13 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import ResponsiveAppBar from './navBar';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const CarList = () => {
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [cars, setCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -74,8 +79,16 @@ const CarList = () => {
           registrationPlate: '',
           isDeleted: false,
         });
+        handleSuccessSnackbarOpen('Car created successfully.');
+        // Add a delay (e.g., 2 seconds) before refresh
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 2000 milliseconds = 2 seconds
       })
-      .catch(error => console.error(error));
+      .catch(error => {
+        console.error(error);
+        handleErrorSnackbarOpen('Error creating car. Please try again.');
+      });
   };
 
   const handleEditChange = (event) => {
@@ -93,8 +106,16 @@ const CarList = () => {
         // Update the cars list with the updated car
         setCars(prevCars => prevCars.map(car => car.id === selectedCar.id ? response.data : car));
         setOpenEditDialog(false);
+        handleSuccessSnackbarOpen('Car edited successfully.');
+        // Add a delay (e.g., 2 seconds) before refresh
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 2000 milliseconds = 2 seconds
       })
-      .catch(error => console.error(error));
+      .catch(error => {
+        console.error(error);
+        handleErrorSnackbarOpen('Error editing car. Please try again.');
+      });
   };
 
   const handleDeleteConfirm = () => {
@@ -104,8 +125,16 @@ const CarList = () => {
         // Remove the deleted car from the cars list
         setCars(prevCars => prevCars.filter(car => car.id !== selectedCar.id));
         setOpenDeleteConfirmation(false);
+        handleSuccessSnackbarOpen('Car deleted successfully.');
+        // Add a delay (e.g., 2 seconds) before refresh
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 2000 milliseconds = 2 seconds
       })
-      .catch(error => console.error(error));
+      .catch(error => {
+        console.error(error);
+        handleErrorSnackbarOpen('Error deleting car. Please try again.');
+      });
   };
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -126,6 +155,21 @@ const CarList = () => {
       .catch(error => console.error(error));
   }, []);
 
+  const handleSuccessSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setOpenSuccessSnackbar(true);
+  };
+
+  const handleErrorSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setOpenErrorSnackbar(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSuccessSnackbar(false);
+    setOpenErrorSnackbar(false);
+  };
+
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -133,7 +177,7 @@ const CarList = () => {
         <ResponsiveAppBar />
         <Container>
           <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <h1>List Of Cars</h1>
+            <h1>List of cars</h1>
             <Button variant="contained" color="primary" onClick={handleCreateDialogOpen}>
               Create A Car
             </Button>
@@ -257,6 +301,33 @@ const CarList = () => {
             </DialogActions>
           </Dialog>
         </Container>
+        <Snackbar
+          open={openSuccessSnackbar}
+          autoHideDuration={5000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <Alert onClose={handleSnackbarClose} severity="success">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={openErrorSnackbar}
+          autoHideDuration={5000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <Alert onClose={handleSnackbarClose} severity="error">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+
       </ThemeProvider>
     </div>
   );

@@ -12,16 +12,22 @@ import {
   DialogActions,
   MenuItem,
   Pagination,
+  Grid,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import ResponsiveAppBar from './navBar';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 import './Users.css'; // Import your custom CSS file
 
 const Users = () => {
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [users, setUsers] = useState([]);
   const [nationalities, setNationalities] = useState([]);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -103,11 +109,18 @@ const Users = () => {
         await axios.put(`http://sbapi.ddns.net:8082/api/users/${editedUser.id}`, requestData);
         setOpenEditDialog(false);
         fetchData();
+        handleSuccessSnackbarOpen('User edited successfully.');
+        // Add a delay (e.g., 2 seconds) before refresh
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 2000 milliseconds = 2 seconds
       } else {
         console.error('Selected nationality not found.');
+        handleErrorSnackbarOpen('Error editing user. Please try again.');
       }
     } catch (error) {
       console.error('Error editing user:', error);
+      handleErrorSnackbarOpen('Error editing user. Please try again.');
     }
   };
 
@@ -128,11 +141,18 @@ const Users = () => {
         await axios.post('http://sbapi.ddns.net:8082/api/register', requestData);
         setOpenCreateDialog(false);
         fetchData();
+        handleSuccessSnackbarOpen('User created successfully.');
+        // Add a delay (e.g., 2 seconds) before refresh
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 2000 milliseconds = 2 seconds
       } else {
         console.error('Selected nationality not found.');
+        handleErrorSnackbarOpen('Error creating user. Please try again.');
       }
     } catch (error) {
       console.error('Error creating user:', error);
+      handleErrorSnackbarOpen('Error creating user. Please try again.');
     }
   };
 
@@ -142,8 +162,14 @@ const Users = () => {
       setOpenDeleteDialog(false);
       setUserToDelete(null);
       fetchData();
+      handleSuccessSnackbarOpen('User deleted successfully.');
+      // Add a delay (e.g., 2 seconds) before refresh
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); // 2000 milliseconds = 2 seconds
     } catch (error) {
       console.error('Error deleting user:', error);
+      handleErrorSnackbarOpen('Error deleting user. Please try again.');
     }
   };
 
@@ -162,6 +188,22 @@ const Users = () => {
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
   const displayedUsers = users.filter(user => !user.isDeleted).slice(indexOfFirstUser, indexOfLastUser);
 
+  const handleSuccessSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setOpenSuccessSnackbar(true);
+  };
+
+  const handleErrorSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setOpenErrorSnackbar(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSuccessSnackbar(false);
+    setOpenErrorSnackbar(false);
+  };
+
+
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -169,8 +211,8 @@ const Users = () => {
         <ResponsiveAppBar />
         <Container>
           <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <h1>List Of Users</h1>
-            <Button variant="contained" onClick={handleCreateClick}>Create User</Button>
+            <h1>List of users</h1>
+            <Button variant="contained" onClick={handleCreateClick}>Create A User</Button>
 
           </div>
           <List>
@@ -199,26 +241,82 @@ const Users = () => {
           <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
             <DialogTitle>Edit User</DialogTitle>
             <DialogContent>
-              <div className="dialog-content">
-                <TextField label="First Name" value={editedUser.fname || ''} onChange={e => setEditedUser({ ...editedUser, fname: e.target.value })} />
-                <TextField label="Last Name" value={editedUser.lname || ''} onChange={e => setEditedUser({ ...editedUser, lname: e.target.value })} />
-                <TextField label="Birthdate" type="date" value={editedUser.birthdate || ''} onChange={e => setEditedUser({ ...editedUser, birthdate: e.target.value })} />
-                <TextField label="Username" value={editedUser.username || ''} onChange={e => setEditedUser({ ...editedUser, username: e.target.value })} />
-                <TextField label="Email" value={editedUser.email || ''} onChange={e => setEditedUser({ ...editedUser, email: e.target.value })} />
-                <TextField label="Password" type="password" value={'****'} onChange={e => setEditedUser({ ...editedUser, password: e.target.value })} />
-                <TextField
-                  label="Nationality"
-                  select
-                  value={editedUser.nationality || ''}
-                  onChange={e => setEditedUser({ ...editedUser, nationality: e.target.value })}
-                >
-                  {nationalities.map(nationality => (
-                    <MenuItem key={nationality.id} value={nationality.nationality}>
-                      {nationality.nationality}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div>
+              <form className="dialog-content" onSubmit={(e) => e.preventDefault()}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="First Name"
+                      variant="standard"
+                      fullWidth
+                      value={editedUser.fname || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, fname: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Last Name"
+                      variant="standard"
+                      fullWidth
+                      value={editedUser.lname || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, lname: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Birthdate"
+                      variant="standard"
+                      fullWidth
+                      type="date"
+                      value={editedUser.birthdate || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, birthdate: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Username"
+                      variant="standard"
+                      fullWidth
+                      value={editedUser.username || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, username: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Email"
+                      variant="standard"
+                      fullWidth
+                      value={editedUser.email || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Password"
+                      variant="standard"
+                      fullWidth
+                      type="password"
+                      value={editedUser.password || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, password: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={20}>
+                    <TextField
+                      label="Nationality"
+                      variant="standard"
+                      fullWidth
+                      select
+                      value={editedUser.nationality || ''}
+                      onChange={(e) => setEditedUser({ ...editedUser, nationality: e.target.value })}
+                    >
+                      {nationalities.map((nationality) => (
+                        <MenuItem key={nationality.id} value={nationality.nationality}>
+                          {nationality.nationality}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </Grid>
+              </form>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
@@ -226,29 +324,86 @@ const Users = () => {
             </DialogActions>
           </Dialog>
 
+
           <Dialog open={openCreateDialog} onClose={() => setOpenCreateDialog(false)}>
-            <DialogTitle>Create User</DialogTitle>
+            <DialogTitle>Create A User</DialogTitle>
             <DialogContent>
-              <div className="dialog-content">
-                <TextField label="First Name" value={newUser.fname} onChange={e => setNewUser({ ...newUser, fname: e.target.value })} />
-                <TextField label="Last Name" value={newUser.lname} onChange={e => setNewUser({ ...newUser, lname: e.target.value })} />
-                <TextField label="Birthdate" type="date" value={newUser.birthdate} onChange={e => setNewUser({ ...newUser, birthdate: e.target.value })} />
-                <TextField label="Username" value={newUser.username} onChange={e => setNewUser({ ...newUser, username: e.target.value })} />
-                <TextField label="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
-                <TextField label="Password" type="password" value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
-                <TextField
-                  label="Nationality"
-                  select
-                  value={newUser.nationality}
-                  onChange={e => setNewUser({ ...newUser, nationality: e.target.value })}
-                >
-                  {nationalities.map(nationality => (
-                    <MenuItem key={nationality.id} value={nationality.id}>
-                      {nationality.nationality}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div>
+              <form className="dialog-content" onSubmit={(e) => e.preventDefault()}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="First Name"
+                      variant="standard"
+                      fullWidth
+                      value={newUser.fname}
+                      onChange={(e) => setNewUser({ ...newUser, fname: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Last Name"
+                      variant="standard"
+                      fullWidth
+                      value={newUser.lname}
+                      onChange={(e) => setNewUser({ ...newUser, lname: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Birthdate"
+                      variant="standard"
+                      fullWidth
+                      type="date"
+                      value={newUser.birthdate}
+                      onChange={(e) => setNewUser({ ...newUser, birthdate: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Username"
+                      variant="standard"
+                      fullWidth
+                      value={newUser.username}
+                      onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Email"
+                      variant="standard"
+                      fullWidth
+                      value={newUser.email}
+                      onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      label="Password"
+                      variant="standard"
+                      fullWidth
+                      type="password"
+                      value={newUser.password}
+                      onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={20}>
+                    <TextField
+                      label="Nationality"
+                      variant="standard"
+                      fullWidth
+                      select
+                      value={newUser.nationality}
+                      onChange={(e) => setNewUser({ ...newUser, nationality: e.target.value })}
+                    >
+                      {nationalities.map((nationality) => (
+                        <MenuItem key={nationality.id} value={nationality.id}>
+                          {nationality.nationality}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </Grid>
+              </form>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenCreateDialog(false)}>Cancel</Button>
@@ -267,6 +422,32 @@ const Users = () => {
             </DialogActions>
           </Dialog>
         </Container>
+        <Snackbar
+          open={openSuccessSnackbar}
+          autoHideDuration={5000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <Alert onClose={handleSnackbarClose} severity="success">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={openErrorSnackbar}
+          autoHideDuration={5000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <Alert onClose={handleSnackbarClose} severity="error">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
 
       </ThemeProvider>
 

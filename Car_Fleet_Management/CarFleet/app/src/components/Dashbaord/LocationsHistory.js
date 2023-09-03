@@ -31,6 +31,7 @@ const LocationsHistory = () => {
   const [selectedPlate, setSelectedPlate] = useState(''); // State to store the selected car's registration plate
   const [locationHistory, setLocationHistory] = useState([]); // State to store the selected car's location history
   const [pathCoordinates, setPathCoordinates] = useState([]); // State to store the path coordinates for the selected car's location history
+  const [selectedDate, setSelectedDate] = useState(''); // State to store the selected date
 
   // Hook to check if the user prefers dark mode
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -62,21 +63,32 @@ const LocationsHistory = () => {
     const selectedCarPlate = event.target.value;
     setSelectedPlate(selectedCarPlate);
 
-    // Make an API call to get the location history of the selected car
-    axios.get(`http://sbapi.ddns.net:8082/api/locations/${selectedCarPlate}/history`)
-      .then(response => {
+    // Fetch the location history for the selected car
+    axios
+      .get(`http://sbapi.ddns.net:8082/api/locations/${selectedCarPlate}/history`)
+      .then((response) => {
         const history = response.data;
         setLocationHistory(history);
-
-        // Extract and store the coordinates from the location history
-        const coordinates = history.map(location => [location.latitude, location.longitude]);
-        setPathCoordinates(coordinates);
+        setPathCoordinates([]); // Clear path coordinates
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching location history:', error);
         setLocationHistory([]);
         setPathCoordinates([]);
       });
+  };
+
+  // Handler function for selecting a date
+  const handleDateSelect = (event) => {
+    const selectedDate = event.target.value;
+    setSelectedDate(selectedDate);
+
+    // Filter the location history based on the selected date
+    const filteredLocations = locationHistory.filter((location) => location.date === selectedDate);
+
+    // Extract and store the coordinates from the filtered location history
+    const coordinates = filteredLocations.map((location) => [location.latitude, location.longitude]);
+    setPathCoordinates(coordinates);
   };
 
   return (
@@ -87,7 +99,7 @@ const LocationsHistory = () => {
       <br />
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        Select Registration Plate To Trace The Car :
+        Choose a registration plate to trace the car :
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -104,11 +116,28 @@ const LocationsHistory = () => {
         </Select>
       </div>
 
-      <br />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        Choose a date :
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          label="date"
+          value={selectedDate}
+          onChange={handleDateSelect}
+        >
+          <MenuItem value="">Show All</MenuItem>
+          {/* Add menu items for available dates */}
+          {Array.from(new Set(locationHistory.map((location) => location.date))).map((uniqueDate) => (
+            <MenuItem key={uniqueDate} value={uniqueDate}>
+              {uniqueDate}
+            </MenuItem>
+          ))}
+        </Select>
+      </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {/* Render the map container */}
-        <MapContainer center={[31.7782632, -9.7908949]} zoom={6} style={{ height: '600px', width: '100%' }}>
+        <MapContainer center={[31.7782632, -9.7908949]} zoom={6} style={{ height: '690px', width: '100%' }}>
           {/* Add the TileLayer component to show the map */}
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -118,22 +147,26 @@ const LocationsHistory = () => {
           {pathCoordinates.length > 0 && (
             <Polyline positions={pathCoordinates} color="blue" />
           )}
-          {/* Display markers for the selected car's location history */}
-          {locationHistory.map(location => (
-            <Marker key={location.id} position={[location.latitude, location.longitude]} icon={
-              L.icon({
-                iconUrl:
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Simpleicons_Places_map-marker-point.svg/2048px-Simpleicons_Places_map-marker-point.svg.png',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10], // Adjust this as needed
-                popupAnchor: [0, -10], // Adjust this as needed
-              })
-            }>
-              <Popup>
-                {`Date: ${location.date} Time: ${location.time}`}
-              </Popup>
-            </Marker>
-          ))}
+          {locationHistory
+            .filter((location) => location.date === selectedDate)
+            .map((location) => (
+              <Marker
+                key={location.id}
+                position={[location.latitude, location.longitude]}
+                icon={
+                  L.icon({
+                    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Simpleicons_Places_map-marker-point.svg/2048px-Simpleicons_Places_map-marker-point.svg.png',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10],
+                    popupAnchor: [0, -10],
+                  })
+                }
+              >
+                <Popup>
+                  {`Date: ${location.date} Time: ${location.time}`}
+                </Popup>
+              </Marker>
+            ))}
         </MapContainer>
       </div>
     </ThemeProvider>
