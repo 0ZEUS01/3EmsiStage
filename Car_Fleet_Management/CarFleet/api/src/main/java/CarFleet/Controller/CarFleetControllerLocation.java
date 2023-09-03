@@ -44,11 +44,4 @@ public class CarFleetControllerLocation {
     public void deleteLocation(@PathVariable String plate) throws SQLException {
     	carFleetServiceLocation.deleteLocation(plate);
     }
-    
-    // Endpoint to update the location of a specific car in real-time
-    @PutMapping("/api/locations/{plate}/update")
-    public void updateLocationRealTime(@PathVariable String plate, @RequestBody Location updatedLocation) throws SQLException {
-        // Implement the logic to update the location in real-time
-        carFleetServiceLocation.updateLocationRealTime(plate, updatedLocation);
-    }
 }

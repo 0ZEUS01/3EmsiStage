@@ -218,5 +218,47 @@ public class CarFleetServiceUser {
 
 		connectDB.disconnect(); // Close the database connection
 	}
+	
+	public String recoverUser(String username_email) throws SQLException{
+	    String email = "";
+	    connectDB.connect(); // Establish the database connection
+	    
+	    java.sql.Connection connection = connectDB.getConnection();
+	    
+	    Encrypt encryptor = new Encrypt();
+	    String noEncryptedPassword = encryptor.generateRandomPassword(8);
+	    String newEncryptedPassword = encryptor.encryptPassword(noEncryptedPassword);
+	    
+	    String sql = "UPDATE users SET password_user = ? WHERE (username_user = ? OR email_user = ?)";
+	    
+	    try (PreparedStatement statement = connection.prepareStatement(sql)){
+	        statement.setString(1, newEncryptedPassword);
+	        statement.setString(2, username_email);
+	        statement.setString(3, username_email);
+	        int rowsAffected = statement.executeUpdate();
+	        if (rowsAffected > 0) {
+	            // User password updated successfully
+	            // Use a different connection for the SELECT query
+	            connectDB.connect(); // Establish the database connection
 
+	            java.sql.Connection connection_two = connectDB.getConnection();
+	            
+	            String sql_two = "SELECT U.email_user FROM users U WHERE (U.username_user = ? OR U.email_user = ?)";
+	            
+	            try (PreparedStatement statement_two = connection_two.prepareStatement(sql_two)) {
+	                statement_two.setString(1, username_email);
+	                statement_two.setString(2, username_email);
+	                ResultSet resultSet = statement_two.executeQuery();
+	                if (resultSet.next()) {
+	                    email = resultSet.getString("email_user");
+	                }
+	            } catch (SQLException e) {
+	                // Handle the exception appropriately
+	            }
+	        }
+	    }
+	    
+	    connectDB.disconnect(); // Close the database connection
+	    return email + "|" + noEncryptedPassword;
+	}
 }

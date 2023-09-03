@@ -12,7 +12,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.NumberUtils;
 
-import CarFleet.Config.CarFleetLocationWebSocketHandler;
 import CarFleet.Model.Car;
 import CarFleet.Model.ConnectDB;
 import CarFleet.Model.Location_History;
@@ -24,7 +23,7 @@ public class CarFleetServiceLocationHistory {
 	
 	private ConnectDB connectDB;
 	
-	public CarFleetServiceLocationHistory(CarFleetLocationWebSocketHandler webSocketHandler) {
+	public CarFleetServiceLocationHistory() {
 		connectDB = new ConnectDB();
 	}
 	

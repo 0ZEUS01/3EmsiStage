@@ -3,6 +3,7 @@ package CarFleet.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import CarFleet.Model.*;
+import CarFleet.Service.CarFleetServiceEmail;
 import CarFleet.Service.CarFleetServiceUser;
 
 import java.sql.SQLException;
@@ -13,6 +14,9 @@ import java.util.Map;
 public class CarFleetControllerUser {
 	@Autowired(required=true)
     private CarFleetServiceUser carFleetServiceUser;
+	
+	@Autowired
+    private CarFleetServiceEmail carFleetServiceEmail;
 
 	                                     /* USER ENDPOINTS */
 	
@@ -50,5 +54,29 @@ public class CarFleetControllerUser {
     @DeleteMapping("/api/users/{id}")
     public void deleteUser(@PathVariable Long id) throws SQLException {
     	carFleetServiceUser.deleteUser(id);
+    }
+    
+    // Endpoint to recover user password
+    @GetMapping("/api/users/{username_email}/recover")
+    public int recoverUser(@PathVariable String username_email)throws SQLException{
+    	String email_password = carFleetServiceUser.recoverUser(username_email);
+    	String[] parts = email_password.split("\\|");
+    	String email = parts[0];
+        String newPassword = parts[1];
+    	int result;
+    	if(email.isEmpty() || email.isBlank()) {
+    		result = -1;
+    		return result;
+    	}
+    	else {
+    		// Send a password recovery email
+            String subject = "Password Recovery";
+            String message = "Your new password is: " + newPassword;
+            
+            carFleetServiceEmail.sendEmail(email, subject, message);
+            
+            result = 1;
+            return result;
+    	}
     }
 }

@@ -1,0 +1,64 @@
+2023-09-03T03:19:40.762+01:00  INFO 24964 --- [main] i.emsistage.api.CarFleetApiApplication   : Starting CarFleetApiApplication using Java 17.0.7 with PID 24964 (C:\Users\Mohamed_Hakkou\Documents\workspace-spring-tool-suite-4-4.19.0.RELEASE\api\target\classes started by Mohamed_Hakkou in C:\Users\Mohamed_Hakkou\Documents\workspace-spring-tool-suite-4-4.19.0.RELEASE\api)
+2023-09-03T03:19:40.763+01:00  INFO 24964 --- [main] i.emsistage.api.CarFleetApiApplication   : No active profile set, falling back to 1 default profile: "default"
+2023-09-03T03:19:41.028+01:00  INFO 24964 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-09-03T03:19:41.039+01:00  INFO 24964 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 6 ms. Found 0 JPA repository interfaces.
+2023-09-03T03:19:41.254+01:00  INFO 24964 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8082 (http)
+2023-09-03T03:19:41.258+01:00  INFO 24964 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-09-03T03:19:41.258+01:00  INFO 24964 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.10]
+2023-09-03T03:19:41.302+01:00  INFO 24964 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-09-03T03:19:41.302+01:00  INFO 24964 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 519 ms
+2023-09-03T03:19:41.389+01:00  INFO 24964 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-09-03T03:19:41.413+01:00  INFO 24964 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.5.Final
+2023-09-03T03:19:41.414+01:00  INFO 24964 --- [main] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2023-09-03T03:19:41.473+01:00  INFO 24964 --- [main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
+2023-09-03T03:19:41.529+01:00  INFO 24964 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2023-09-03T03:19:41.537+01:00  INFO 24964 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-09-03T03:19:41.660+01:00  INFO 24964 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 303c3272-af30-45ba-a363-210944a9af9e
+2023-09-03T03:19:41.661+01:00  INFO 24964 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-09-03T03:19:41.720+01:00  INFO 24964 --- [main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
+2023-09-03T03:19:41.820+01:00  INFO 24964 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-09-03T03:19:41.822+01:00  INFO 24964 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-09-03T03:19:41.856+01:00  WARN 24964 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-09-03T03:19:42.014+01:00  INFO 24964 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8082 (http) with context path ''
+2023-09-03T03:19:42.019+01:00  INFO 24964 --- [main] i.emsistage.api.CarFleetApiApplication   : Started CarFleetApiApplication in 1.434 seconds (process running for 1.725)
+2023-09-03T03:19:43.389+01:00  INFO 24964 --- [http-nio-192.168.11.130-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-09-03T03:19:43.389+01:00  INFO 24964 --- [http-nio-192.168.11.130-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2023-09-03T03:19:43.389+01:00  INFO 24964 --- [http-nio-192.168.11.130-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2023-09-03T03:21:18.797+01:00  INFO 24964 --- [RMI TCP Connection(5)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2023-09-03T03:21:18.799+01:00  INFO 24964 --- [RMI TCP Connection(5)-127.0.0.1] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-09-03T03:21:18.800+01:00  INFO 24964 --- [RMI TCP Connection(5)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2023-09-03T03:21:18.803+01:00  INFO 24964 --- [RMI TCP Connection(5)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-09-03T03:21:18.804+01:00  INFO 24964 --- [RMI TCP Connection(5)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-09-03T03:21:18.805+01:00  INFO 24964 --- [RMI TCP Connection(5)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-09-03T03:21:19.863+01:00  INFO 20736 --- [main] i.emsistage.api.CarFleetApiApplication   : Starting CarFleetApiApplication using Java 17.0.7 with PID 20736 (C:\Users\Mohamed_Hakkou\Documents\workspace-spring-tool-suite-4-4.19.0.RELEASE\api\target\classes started by Mohamed_Hakkou in C:\Users\Mohamed_Hakkou\Documents\workspace-spring-tool-suite-4-4.19.0.RELEASE\api)
+2023-09-03T03:21:19.864+01:00  INFO 20736 --- [main] i.emsistage.api.CarFleetApiApplication   : No active profile set, falling back to 1 default profile: "default"
+2023-09-03T03:21:20.121+01:00  INFO 20736 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-09-03T03:21:20.130+01:00  INFO 20736 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 5 ms. Found 0 JPA repository interfaces.
+2023-09-03T03:21:20.333+01:00  INFO 20736 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8082 (http)
+2023-09-03T03:21:20.338+01:00  INFO 20736 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-09-03T03:21:20.338+01:00  INFO 20736 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.10]
+2023-09-03T03:21:20.381+01:00  INFO 20736 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-09-03T03:21:20.381+01:00  INFO 20736 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 495 ms
+2023-09-03T03:21:20.470+01:00  INFO 20736 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-09-03T03:21:20.494+01:00  INFO 20736 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.5.Final
+2023-09-03T03:21:20.496+01:00  INFO 20736 --- [main] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2023-09-03T03:21:20.554+01:00  INFO 20736 --- [main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
+2023-09-03T03:21:20.613+01:00  INFO 20736 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2023-09-03T03:21:20.620+01:00  INFO 20736 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-09-03T03:21:20.739+01:00  INFO 20736 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 7ca09213-fa65-460e-9620-e458842072b5
+2023-09-03T03:21:20.740+01:00  INFO 20736 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-09-03T03:21:20.800+01:00  INFO 20736 --- [main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
+2023-09-03T03:21:20.897+01:00  INFO 20736 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-09-03T03:21:20.900+01:00  INFO 20736 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-09-03T03:21:20.932+01:00  WARN 20736 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-09-03T03:21:21.083+01:00  INFO 20736 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8082 (http) with context path ''
+2023-09-03T03:21:21.089+01:00  INFO 20736 --- [main] i.emsistage.api.CarFleetApiApplication   : Started CarFleetApiApplication in 1.401 seconds (process running for 1.684)
+2023-09-03T03:21:23.760+01:00  INFO 20736 --- [http-nio-192.168.11.130-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-09-03T03:21:23.761+01:00  INFO 20736 --- [http-nio-192.168.11.130-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2023-09-03T03:21:23.761+01:00  INFO 20736 --- [http-nio-192.168.11.130-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2023-09-03T03:30:36.131+01:00  INFO 20736 --- [RMI TCP Connection(13)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2023-09-03T03:30:36.133+01:00  INFO 20736 --- [RMI TCP Connection(13)-127.0.0.1] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-09-03T03:30:36.134+01:00  INFO 20736 --- [RMI TCP Connection(13)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2023-09-03T03:30:36.138+01:00  INFO 20736 --- [RMI TCP Connection(13)-127.0.0.1] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-09-03T03:30:36.139+01:00  INFO 20736 --- [RMI TCP Connection(13)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-09-03T03:30:36.140+01:00  INFO 20736 --- [RMI TCP Connection(13)-127.0.0.1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

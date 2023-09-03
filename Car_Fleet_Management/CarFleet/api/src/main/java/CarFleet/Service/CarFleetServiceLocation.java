@@ -12,7 +12,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.NumberUtils;
 
-import CarFleet.Config.CarFleetLocationWebSocketHandler;
 import CarFleet.Model.Car;
 import CarFleet.Model.ConnectDB;
 import CarFleet.Model.Location;
@@ -23,11 +22,9 @@ public class CarFleetServiceLocation {
 	                                 /* CONSTRUCTOR INITIALIZE ConnectDB SERVICES */
 
 	private ConnectDB connectDB;
-	private final CarFleetLocationWebSocketHandler webSocketHandler;
 
-	public CarFleetServiceLocation(CarFleetLocationWebSocketHandler webSocketHandler) {
+	public CarFleetServiceLocation() {
 		connectDB = new ConnectDB();
-		this.webSocketHandler = webSocketHandler;
 	}
 
 	                                          /* LOCATIONS SERVICES */
@@ -183,17 +180,5 @@ public class CarFleetServiceLocation {
 
 		// Close the database connection
 		connectDB.disconnect();
-	}
-	
-	public void updateLocationRealTime(String plate, Location updatedLocation) throws SQLException {
-	    updateLocation(plate, updatedLocation);
-	    System.out.println(plate);
-	    System.out.println(updatedLocation.getLatitude());
-	    // Broadcast the updated location to connected WebSocket clients
-	    try {
-	        webSocketHandler.broadcastLocationUpdate(updatedLocation);
-	    } catch (Exception e) {
-	        // Handle exceptions if broadcasting fails
-	    }
 	}
 }
