@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 import { Link } from 'react-router-dom';
 
@@ -125,7 +126,6 @@ function ResponsiveAppBar() {
                       width: '100%',
                     }}
                   >
-
                     <Typography textAlign="center">{page.label}</Typography>
                   </Link>
                 </MenuItem>
@@ -164,8 +164,32 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
+          {/* Download App Button */}
+          <div style={{ marginLeft: '16px', marginTop: '8px', display: 'flex', alignItems: 'center' }}>
+            <Button
+              component="a"
+              href="/CarFleetManagement.apk" // Update with the correct path
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none',
+                borderRadius: '4px',
+                padding: '8px 16px',
+                transition: 'background-color 0.3s ease',
+              }}
+            >
+              <GetAppIcon sx={{ marginRight: '8px' }} />
+              <span style={{ fontWeight: 'bold' }}>Download App</span>
+            </Button>
+          </div>
+
+
+
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title={fullName}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt={fullName} src="/static/images/avatar/2.jpg" />
               </IconButton>
